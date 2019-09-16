@@ -28,7 +28,7 @@ public interface CustomerCapacityRepository extends CrudRepository<CustomerCapac
 	
 	@Query (
 		value = "" +
-			"SELECT A.ID, A.capaccountid, A.capsegmentid, A.ownerid, A.offregister, A.fleetSegment, A.fleetSubSegment, " + 
+			"SELECT A.IDx, A.capaccountid, A.capsegmentid, A.ownerid, A.offregister, A.fleetSegment, A.fleetSubSegment, " + 
 			"(SELECT case when a.statusid = 6237299 /* IF PROPOSED */ then B.PROPOSEDBALANCE else B.GROSSBALANCE end FROM capaccountsegment B WHERE B.capaccountid = A.capaccountid AND B.UOMID = 91359 and B.segmentid = A.segmentid) gt, " + 
 			"A.kw, A.vesselid, A.vesselname, A.proposed /*, A.segmentid, A.CREATEDATE*/ FROM ( " + 
 			"select rownum ID, a.capaccountid, b.capsegmentid, a.ownerid, " + 
@@ -50,7 +50,7 @@ public interface CustomerCapacityRepository extends CrudRepository<CustomerCapac
 			"inner join capaccountsegment b on b.CAPACCOUNTID = a.CAPACCOUNTID " + 
 			"inner join vessel c on a.vesselid = c.vesselid " + 
 			"where ownerid = :ownerId and a.inactiveind = 'N' and b.inactiveind = 'N' /*and a.capaccountid = 23906141*/ " + 
-			") A WHERE A.CapAccRank = 2 order by A.CREATEDATE", nativeQuery = true
+			") A WHERE A.CapAccRank = 2 order by A.offregister, A.proposed, A.CREATEDATE", nativeQuery = true
 		)
 		public List<Capacity> findCapacityByOwnerId (@Param("ownerId") String ownerId);
 	
