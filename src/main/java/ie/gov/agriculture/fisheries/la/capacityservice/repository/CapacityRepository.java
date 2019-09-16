@@ -30,7 +30,7 @@ public interface CapacityRepository extends CrudRepository<Capacity, String> {
 			"case when (b.segmentid is null) then 0 else b.segmentid end fleetSubSegment, a.vesselid, c.vesselname, " + 
 			"case when (a.statusid = 6237299) then 'true' else 'false' end proposed, b.segmentid, " + 
 			"/*(select GROSSBALANCE from capaccountsegment where CAPACCOUNTID = a.capaccountid and CAPSEGMENTID = b.capsegmentid and UOMID = 91359) gt,*/ " + 
-			"(select case when a.statusid = 6237299 /* IF PROPOSED */ then B.PROPOSEDBALANCE else B.GROSSBALANCE end from capaccountsegment where CAPACCOUNTID = a.capaccountid and CAPSEGMENTID = b.capsegmentid and UOMID = 91290) kw, " +  
+			"(select case when a.statusid = 6237299 /* IF PROPOSED */ then B.PROPOSEDBALANCE else B.GROSSBALANCE end from capaccountsegment B where CAPACCOUNTID = a.capaccountid and CAPSEGMENTID = b.capsegmentid and UOMID = 91290) kw, " +  
 			"a.CREATEDATE, ROW_NUMBER() OVER (partition by a.capaccountid ORDER BY a.capaccountid) CapAccRank, a.statusid " + 
 			"from capacityaccount a " + 
 			"inner join capaccountsegment b on b.CAPACCOUNTID = a.CAPACCOUNTID " + 
