@@ -17,7 +17,7 @@ public class CapacityDTO {
 	private String gt; // this may be a subset of the entire capacity of the vessel
 	private String kw; // this may be a subset of the entire capacity of the vessel
 	private String vesselId;
-	private boolean proposed; //off-register only attributes
+	private String proposed; //off-register only attributes
 
 	private VesselSummaryDTO vesselSummary; //: VesselSummary = null;
 	private List<?> details; //: Array<CapacityDetail> = [];
