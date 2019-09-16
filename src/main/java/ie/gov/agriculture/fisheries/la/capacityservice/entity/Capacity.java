@@ -1,7 +1,6 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.entity;
 
 import javax.persistence.Transient;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -50,7 +49,7 @@ public class Capacity {
 	private Integer vesselId;
 	
 	@Column(name = "proposed")
-	private boolean proposed; //off-register only attributes
+	private String proposed; //off-register only attributes
 
 	@JsonInclude()
 	@Transient
