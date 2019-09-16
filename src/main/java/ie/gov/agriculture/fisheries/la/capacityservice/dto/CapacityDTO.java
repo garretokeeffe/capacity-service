@@ -1,10 +1,6 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.dto;
 
 import java.util.List;
-
-import javax.persistence.Column;
-
-import ie.gov.agriculture.fisheries.la.capacityservice.entity.Vessel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
