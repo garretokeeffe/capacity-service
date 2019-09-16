@@ -28,9 +28,9 @@ public interface CustomerCapacityRepository extends CrudRepository<CustomerCapac
 	
 	@Query (
 		value = "" +
-			"SELECT A.IDx, A.capaccountid, A.capsegmentid, A.ownerid, A.offregister, A.fleetSegment, A.fleetSubSegment, " + 
+			"SELECT A.ID, A.capaccountid, A.capsegmentid, A.ownerid, A.offregister, A.fleetSegment, A.fleetSubSegment, " + 
 			"(SELECT case when a.statusid = 6237299 /* IF PROPOSED */ then B.PROPOSEDBALANCE else B.GROSSBALANCE end FROM capaccountsegment B WHERE B.capaccountid = A.capaccountid AND B.UOMID = 91359 and B.segmentid = A.segmentid) gt, " + 
-			"A.kw, A.vesselid, A.vesselname, A.proposed /*, A.segmentid, A.CREATEDATE*/ FROM ( " + 
+			"A.kw, A.vesselid, A.vesselname, case when A.offregister='true' then A.proposed else null end proposed FROM ( " + 
 			"select rownum ID, a.capaccountid, b.capsegmentid, a.ownerid, " + 
 			"case when (a.statusid = 6237297 and c.STATUSID = 1811007) then 'false' else 'true' end offRegister, " + 
 			"case" + 
