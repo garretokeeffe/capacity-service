@@ -35,8 +35,10 @@ public interface CapacityRepository extends CrudRepository<Capacity, String> {
 			"from capacityaccount a " + 
 			"inner join capaccountsegment b on b.CAPACCOUNTID = a.CAPACCOUNTID " + 
 			"inner join vessel c on a.vesselid = c.vesselid " + 
-			"where ownerid = :ownerId and a.inactiveind = 'N' and b.inactiveind = 'N' /*and a.capaccountid = 23906141*/ " + 
-			") A WHERE A.CapAccRank = 2 order by A.offregister, A.proposed, A.CREATEDATE", nativeQuery = true
+			"where ownerid = :ownerId and a.inactiveind = 'N' and b.inactiveind = 'N' " + 
+			") A WHERE A.CapAccRank = 2 " +
+			"and (kw > 0 and (SELECT case when a.statusid = 6237299 then MAX(B.PROPOSEDBALANCE) else MAX(B.GROSSBALANCE) end FROM capaccountsegment B WHERE B.capaccountid = A.capaccountid AND B.UOMID = 91359 and B.segmentid = A.segmentid ) > 0) " +
+			"order by A.offregister, A.proposed, A.CREATEDATE", nativeQuery = true
 		)
 		public List<Capacity> findCapacityByOwnerId (@Param("ownerId") String ownerId);
 }
