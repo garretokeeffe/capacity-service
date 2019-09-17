@@ -16,7 +16,7 @@ public interface VesselSummaryRepository extends CrudRepository<VesselSummary, I
 	@Query (
 		value = "" +
 			"SELECT v.vesselid id, v.vesselname \"name\", pkgifisreference.Fngetreferencedesc(v.statusid) status, " + 
-			"(select IDENTIFICATIONNO from vesselidentification where IDTYPEID = 91347 and VESSELID = v.vesselid and INACTIVEIND = 'N') cfr, " + 
+			"(select IDENTIFICATIONNO from vesselidentification where IDTYPEID = 91348 and VESSELID = v.vesselid and INACTIVEIND = 'N') cfr, " + 
 			"(select IDENTIFICATIONNO from vesselidentification where IDTYPEID = 91347 and VESSELID = v.vesselid and INACTIVEIND = 'N') prn, " + 
 			"(select tonnage from vesseldimension where VESSELID = v.vesselid and INACTIVEIND = 'N') gt, " + 
 			"(select enginepower from vesselengine where VESSELID = v.vesselid and INACTIVEIND = 'N') kw " + 
