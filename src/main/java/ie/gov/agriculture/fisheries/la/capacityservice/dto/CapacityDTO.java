@@ -20,13 +20,6 @@ public class CapacityDTO {
 	private String proposed; //off-register only attributes
 
 	private VesselSummaryDTO vesselSummary; //: VesselSummary = null;
-	private List<?> details; //: Array<CapacityDetail> = [];
+	private List<CapacityDetailDTO> capDetail; //: Array<CapacityDetail> = [];
 	private List<?> penaltyPoints; //: Array<PenaltyPoints> = [];
-	
-//	public boolean isOffRegister() {
-//		return offRegister;
-//	}
-//	public void setOffRegister(boolean offRegister) {
-//		this.offRegister = offRegister;
-//	}
 }
