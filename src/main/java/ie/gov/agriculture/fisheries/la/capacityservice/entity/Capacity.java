@@ -1,6 +1,7 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.entity;
 
 import javax.persistence.Transient;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -43,8 +44,6 @@ public class Capacity {
 	@Column(name = "kw")
 	private String kw; // this may be a subset of the entire capacity of the vessel
 
-	//private List<?> details; //: Array<CapacityDetail> = [];
-
 	@Column(name = "vesselid")
 	private Integer vesselId;
 	
@@ -54,6 +53,10 @@ public class Capacity {
 	@JsonInclude()
 	@Transient
 	private VesselSummary vesselSummary; //: VesselSummary = null;
+
+	@JsonInclude()
+	@Transient
+	private List<CapacityDetail> capDetail; //: Array<CapacityDetail> = [];
 
 	//private List<?> penaltyPoints; //: Array<PenaltyPoints> = [];
 }
