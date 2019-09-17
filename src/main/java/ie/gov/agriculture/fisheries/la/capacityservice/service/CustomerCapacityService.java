@@ -14,6 +14,7 @@ import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CustomerCapacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.VesselSummary;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityRepository;
+import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityDetailRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.VesselSummaryRepository;
 
@@ -35,6 +36,9 @@ public class CustomerCapacityService {
 	CapacityRepository capacityRepository;
 	
 	@Autowired
+	CustomerCapacityDetailRepository customerCapacityDetailRepository;
+	
+	@Autowired
 	VesselSummaryRepository vesselSummaryRepository;
 	
 	@Autowired
@@ -48,8 +52,8 @@ public class CustomerCapacityService {
 		
 		List<Capacity> capacity = capacityRepository.findCapacityByOwnerId(customerId);
 		
-		// Get vessel for capacity ...
-		capacity.forEach(item -> this.getVesselForCapacity(item));
+		// Get capacity detail items ...
+		capacity.forEach(item -> this.getCapacityDetailItems(item));
 		
 		// Convert capacity items to DTO ...
 		capacity.forEach(item -> capacityDTO.add(this.convertCapacityToDTO(item)));
@@ -69,6 +73,19 @@ public class CustomerCapacityService {
 		return allCapacityDTO;
 	}
 	
+	private void getCapacityDetailItems(Capacity capacity) {
+		// Get capacity detail ...
+		System.out.println("XXX - CustomerCapacityService.getCapacityDetailItems:" + capacity.getCapAccountId());
+		capacity.setCapDetail(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(capacity.getCapAccountId()));
+		
+		// Get Vessel ...
+		capacity.setVesselSummary(vesselSummaryRepository.findVesselSummaryByVesselId(capacity.getVesselId()));
+    }
+	
+	private CapacityDTO convertCapacityToDTO(Capacity capacity) {
+		return modelMapper.map(capacity, CapacityDTO.class);
+    }
+	
 	public List<CustomerCapacityDTO> getCustomerCapacityInformation (String customerId) {
 		LOGGER.debug("CustomerCapacityService.getCustomerCapacityInformation(" + customerId + ")");
 		
@@ -80,15 +97,6 @@ public class CustomerCapacityService {
 		
 		return listCustomerCapacityDTO;
 	}
-	
-	private CapacityDTO convertCapacityToDTO(Capacity capacity) {
-		return modelMapper.map(capacity, CapacityDTO.class);
-    }
-	
-	private void getVesselForCapacity(Capacity capacity) {
-		//VesselSummary vesselSummary = vesselSummaryRepository.findVesselSummaryByVesselId(capacity.getVesselId());
-		capacity.setVesselSummary(vesselSummaryRepository.findVesselSummaryByVesselId(capacity.getVesselId()));
-    }
 	
 	private CustomerCapacityDTO convertCustomerCapacityToDTO(CustomerCapacity customerCapacity) {
 		return modelMapper.map(customerCapacity, CustomerCapacityDTO.class);
