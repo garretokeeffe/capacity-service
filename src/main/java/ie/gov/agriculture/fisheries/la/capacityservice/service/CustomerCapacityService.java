@@ -13,6 +13,7 @@ import ie.gov.agriculture.fisheries.la.capacityservice.entity.AllCapacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CustomerCapacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.VesselSummary;
+import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityPenaltyPointsRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityDetailRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityRepository;
@@ -40,6 +41,9 @@ public class CustomerCapacityService {
 	
 	@Autowired
 	VesselSummaryRepository vesselSummaryRepository;
+	
+	@Autowired
+	CapacityPenaltyPointsRepository capacityPenaltyPointsRepository;
 	
 	@Autowired
     private ModelMapper modelMapper;
@@ -78,7 +82,10 @@ public class CustomerCapacityService {
 		System.out.println("XXX - CustomerCapacityService.getCapacityDetailItems:" + capacity.getCapAccountId());
 		capacity.setCapDetail(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(capacity.getCapAccountId()));
 		
-		// Get Vessel ...
+		// Get penalty points ...
+		capacity.setPenaltyPoints(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(capacity.getCapAccountId()));
+		
+		// Get vessel ...
 		capacity.setVesselSummary(vesselSummaryRepository.findVesselSummaryByVesselId(capacity.getVesselId()));
     }
 	
