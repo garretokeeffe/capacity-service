@@ -14,7 +14,7 @@ import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
 public interface CapacityRepository extends CrudRepository<Capacity, String> {
 	@Query (
 		value = "" +
-			"SELECT A.ID, A.capaccountid, A.capsegmentid, A.ownerid, A.offregister, A.fleetSegment, A.fleetSubSegment, " + 
+			"SELECT A.ID, A.capaccountid, /*A.capsegmentid,*/ A.ownerid, A.offregister, A.fleetSegment, A.fleetSubSegment, " + 
 			"COALESCE((SELECT case when a.statusid = 6237299 /* IF PROPOSED */ then B.PROPOSEDBALANCE else B.GROSSBALANCE end FROM capaccountsegment B WHERE B.capaccountid = A.capaccountid AND B.UOMID = 91359 and B.segmentid = A.segmentid), 0) gt, " +  
 			"COALESCE(A.kw, 0) kw, A.vesselid, A.vesselname, case when A.offregister='true' then A.proposed else null end proposed FROM ( " + 
 			"select rownum ID, a.capaccountid, b.capsegmentid, a.ownerid, " + 
