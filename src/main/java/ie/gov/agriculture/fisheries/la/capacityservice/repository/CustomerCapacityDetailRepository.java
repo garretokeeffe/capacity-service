@@ -13,10 +13,10 @@ import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
 public interface CustomerCapacityDetailRepository extends CrudRepository<CapacityDetail, String> {
 	@Query (
 		value = "" +
-			"select distinct TRANSDETAILID ID, CAPACITYAMOUNT, CAPACITYTYPE, OFFREGDATE, CAPACITYEXPIRYDATE, SOURCEVESSELID, SOURCEVESSELNAME from ( " + 
+			"select distinct TRANSDETAILID ID, CAPACITYAMOUNT, CAPACITYTYPE, TO_CHAR(OFFREGDATE, 'dd/mm/yyyy') OFFREGDATE, TO_CHAR(CAPACITYEXPIRYDATE, 'dd/mm/yyyy') CAPACITYEXPIRYDATE, SOURCEVESSELID, SOURCEVESSELNAME, POINTSASSIGNED from ( " + 
 				"select c.TRANSDETAILID, c.TRANSACTIONAMOUNT /*case when a.statusid = 6237299 then B.PROPOSEDBALANCE else B.GROSSBALANCE end*/ CAPACITYAMOUNT, " + 
 				"pkgifisreference.fngetreferencedesc(b.UOMID) CAPACITYTYPE, " + 
-				"b.OFFREGDATE, b.CAPACITYEXPIRYDATE, C.SOURCEVESSELID, d.vesselname SOURCEVESSELNAME " + 
+				"b.OFFREGDATE, b.CAPACITYEXPIRYDATE, C.SOURCEVESSELID, d.vesselname SOURCEVESSELNAME, c.POINTSASSIGNED " + 
 				"from capacityaccount a " + 
 				"inner join capaccountsegment b on b.CAPACCOUNTID = a.CAPACCOUNTID " + 
 				"inner join CAPTRANSDETAIL c on b.CAPSEGMENTID = c.CAPSEGMENTID and c.transactiontypeid = 10612 /* credit trans */ " + 
