@@ -1,8 +1,11 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.entity;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,7 +37,10 @@ public class CapacityDetail {
 	@Column(name = "SOURCEVESSELNAME")
 	private String sourceVesselName;
 	
-	//private List<?> trackRecord;
+	@Column(name = "POINTSASSIGNED")
+	private String POINTSASSIGNED;
 	
-	//private List<?> penaltyPoints; //No need to display for On-Register in which case penalty points apply to the parent capacity segment
+	@JsonInclude()
+	@Transient
+	private List<TrackRecord> trackRecord;
 }
