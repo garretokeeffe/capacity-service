@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter @Setter @NoArgsConstructor @ToString
 public class CapacityDTO {
 	private String capAccountId;
-	private String capSegmentId;
+//	private String capSegmentId;
 	private String ownerId;
 	private boolean offRegister;
 	private String fleetSegment; // FLEET SEGMENT REFERENCE DATA
@@ -19,7 +19,7 @@ public class CapacityDTO {
 	private String vesselId;
 	private String proposed; //off-register only attributes
 
-	private VesselSummaryDTO vesselSummary; //: VesselSummary = null;
-	private List<CapacityDetailDTO> capDetail; //: Array<CapacityDetail> = [];
-	private List<?> penaltyPoints; //: Array<PenaltyPoints> = [];
+	private VesselSummaryDTO vesselSummary;
+	private List<CapacityDetailDTO> capDetail;
+	private List<PenaltyPointsDTO> penaltyPoints;
 }
