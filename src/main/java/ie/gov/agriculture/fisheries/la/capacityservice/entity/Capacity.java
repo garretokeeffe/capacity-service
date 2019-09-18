@@ -23,8 +23,8 @@ public class Capacity {
 	@Column(name = "capaccountid")
 	private Integer capAccountId;
 	
-	@Column(name = "capsegmentid")
-	private Integer capSegmentId;
+//	@Column(name = "capsegmentid")
+//	private Integer capSegmentId;
 
 	@Column(name = "ownerid")
 	private String ownerId;
@@ -52,11 +52,13 @@ public class Capacity {
 
 	@JsonInclude()
 	@Transient
-	private VesselSummary vesselSummary; //: VesselSummary = null;
+	private VesselSummary vesselSummary;
 
 	@JsonInclude()
 	@Transient
-	private List<CapacityDetail> capDetail; //: Array<CapacityDetail> = [];
+	private List<CapacityDetail> capDetail;
 
-	//private List<?> penaltyPoints; //: Array<PenaltyPoints> = [];
+	@JsonInclude()
+	@Transient
+	private List<PenaltyPoints> penaltyPoints;
 }
