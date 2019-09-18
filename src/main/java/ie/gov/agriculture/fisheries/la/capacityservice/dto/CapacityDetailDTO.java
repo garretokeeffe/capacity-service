@@ -1,5 +1,6 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.dto;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,8 +15,7 @@ public class CapacityDetailDTO {
 	private String expiryDate; // dd/mm/yyyy
 	private String sourceVesselId;       // future-proof, in case we need to do searches on the source vessel
 	private String sourceVesselName;
+	private String POINTSASSIGNED;
 	
-	//private List<?> trackRecord;
-	
-	//private List<?> penaltyPoints; //No need to display for On-Register in which case penalty points apply to the parent capacity segment
+	private List<TrackRecordDTO> trackRecord;
 }
