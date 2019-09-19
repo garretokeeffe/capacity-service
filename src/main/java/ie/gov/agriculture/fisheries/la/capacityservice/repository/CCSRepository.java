@@ -14,7 +14,7 @@ import ie.gov.agriculture.fisheries.la.capacityservice.entity.IfisWrapper;
  */
 public interface CCSRepository extends CrudRepository<IfisWrapper, String> {
 	@Query (
-		value = "SELECT pkco_ifis.fn_get_fisheries_custid_role(:ccsId, 155) bcus_fisheries_cust_id FROM dual" , nativeQuery = true
+		value = "SELECT coalesce(pkco_ifis.fn_get_fisheries_custid_role(:ccsId, 155), ' ') bcus_fisheries_cust_id FROM dual" , nativeQuery = true
 	)
 
 	public List<IfisWrapper> findIfisIdbyCcsId (@Param("ccsId") String ccsId);
