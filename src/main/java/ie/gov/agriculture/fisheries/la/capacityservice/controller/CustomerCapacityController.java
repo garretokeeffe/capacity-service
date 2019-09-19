@@ -22,10 +22,18 @@ public class CustomerCapacityController {
 	@Autowired
 	CustomerCapacityService customerCapacityService;
 	
-	@ApiOperation(value = "Retrieve complete AllCapacity information for an individual customer [e.g. http://localhost:8080/sfos/capacity/ccs/23630]")
+	@ApiOperation(value = "Retrieve complete AllCapacity information for an individual customer using ccs customer id [e.g. http://localhost:8080/sfos/capacity/ccs/FBY10086C]")
 	@GetMapping(path = "/capacity/ccs/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AllCapacityDTO> getCustomerCapacity(@PathVariable(required = true) String customerId) throws Exception {
-		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId);
+	public ResponseEntity<AllCapacityDTO> getCustomerCapacityByCcsID(@PathVariable(required = true) String customerId) throws Exception {
+		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true);
+		
+		return new ResponseEntity<AllCapacityDTO>(allCapacityDTO, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "Retrieve complete AllCapacity information for an individual customer using ifis customer id [e.g. http://localhost:8080/sfos/capacity/ifis/2957]")
+	@GetMapping(path = "/capacity/ifis/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<AllCapacityDTO> getCustomerCapacityByIfisID(@PathVariable(required = true) String customerId) throws Exception {
+		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false);
 		
 		return new ResponseEntity<AllCapacityDTO>(allCapacityDTO, HttpStatus.OK);
 	}
