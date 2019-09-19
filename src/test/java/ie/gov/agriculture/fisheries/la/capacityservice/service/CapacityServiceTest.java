@@ -25,25 +25,61 @@ public class CapacityServiceTest {
 	CustomerCapacityService customerCapacityService;
 	
 	@Test
-	public void getAllCapacity() {
-		testMthd = testClass + ".getAllCapacity().";
+	public void getAllCapacityByCcsID() {
+		testMthd = testClass + ".getAllCapacityByCcsID().";
 		boolean success = true;
-		final String customerId = "4052";
+		final String customerId = "FBY10086C";
 		
 		this.doLog("T E S T - " + testMthd);
 
 		try {
-			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId);
+			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true);
 			
 			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
 			
-			assertTrue(testMthd + " '4052'.equalsIgnoreCase(allCapacityDTO.getOwnerId()) assert true.", "4052".equalsIgnoreCase(allCapacityDTO.getOwnerId()));
+			assertTrue(testMthd + " '2957'.equalsIgnoreCase(allCapacityDTO.getOwnerId()) assert true.", "2957".equalsIgnoreCase(allCapacityDTO.getOwnerId()));
+			
+System.out.println("allCapacityDTO.getOnRegister().size:" + allCapacityDTO.getOnRegister().size());
+System.out.println("allCapacityDTO.getOffRegister().size():" + allCapacityDTO.getOffRegister().size());
 			
 			assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()>0 assert true.", allCapacityDTO.getOnRegister().size()>0);
 			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()>0 assert true.", allCapacityDTO.getOffRegister().size()>0);
 			
-			assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()==1 assert true.", allCapacityDTO.getOnRegister().size()==1);
-			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()==2 assert true.", allCapacityDTO.getOffRegister().size()==1);
+			assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()==1 assert true.", allCapacityDTO.getOnRegister().size()==3);
+			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()==2 assert true.", allCapacityDTO.getOffRegister().size()==5);
+			
+			success = true;
+		} catch (Exception e) {
+			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
+			e.printStackTrace();
+			success = false;
+		}
+
+		assertTrue("T E S T - " + testMthd + " assert true.", success);
+		
+		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
+	}
+	
+	@Test
+	public void getAllCapacityByIfisID() {
+		testMthd = testClass + ".getAllCapacityByIfisID().";
+		boolean success = true;
+		final String customerId = "2957";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false);
+			
+			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
+			
+			assertTrue(testMthd + " '2957'.equalsIgnoreCase(allCapacityDTO.getOwnerId()) assert true.", "2957".equalsIgnoreCase(allCapacityDTO.getOwnerId()));
+			
+			assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()>0 assert true.", allCapacityDTO.getOnRegister().size()>0);
+			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()>0 assert true.", allCapacityDTO.getOffRegister().size()>0);
+			
+			assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()==1 assert true.", allCapacityDTO.getOnRegister().size()==3);
+			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()==2 assert true.", allCapacityDTO.getOffRegister().size()==5);
 			
 			success = true;
 		} catch (Exception e) {
