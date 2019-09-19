@@ -139,12 +139,19 @@ public class CustomerCapacityService {
 		LOGGER.debug("VesselService.getIfisIdbyCcsId({})", ccsId);
 		
 		List<IfisWrapper> results = cCSRepository.findIfisIdbyCcsId(ccsId);
-		if (CollectionUtils.isEmpty(results)) {
+		if (results==null || CollectionUtils.isEmpty(results)) {
 			LOGGER.info("Unable to find IFIS-Id for ccsId {}", ccsId);
 			throw new ResourceNotFoundException("No IFIS-ID found for ccsId:" + ccsId);
 		}
 		
 		String ifisId = results.get(0).getIfisId();
+
+		// Double check we have a valid value returned ...
+		if (ifisId.trim().equalsIgnoreCase("")) {
+			LOGGER.info("Unable to find IFIS-Id for ccsId {}", ccsId);
+			throw new ResourceNotFoundException("No IFIS-ID found for ccsId:" + ccsId);
+		}
+		
 		if (results.size() > 1) { //should not happen
 			LOGGER.warn("For ccsId:{}, Found {} IFIS-IDss:{}. Will use first:{}",ccsId, results.size(), results, results.get(0));
 		}
