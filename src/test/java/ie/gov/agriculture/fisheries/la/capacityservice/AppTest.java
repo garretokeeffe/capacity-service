@@ -4,16 +4,22 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityRepositoryTest;
 
 @ActiveProfiles(profiles = "tomcat")
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AppTest {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CapacityRepositoryTest.class);
+	
 	@Test
-	public void testLAWebApplication() {
+	public void testCapaityServiceApplication() {
 		boolean success = false;
 
 		try {
@@ -22,6 +28,8 @@ public class AppTest {
 			success = true;
 		} catch (Exception e) {}
 
-		assertTrue("CapaityServiceApplication assert true.", success);
+		assertTrue("T E S T - AppTest.testCapaityServiceApplication assert true.", success);
+		
+		LOGGER.info("T E S T - AppTest.testCapaityServiceApplication complete: success = " + success);
 	}
 }
