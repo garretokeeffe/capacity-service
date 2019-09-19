@@ -12,17 +12,4 @@ public class AllCapacityDTO {
 	
 	private List<CapacityDTO> onRegister;
 	private List<CapacityDTO> offRegister;
-	
-//	public List<CapacityDTO> getOnRegister() {
-//		return onRegister;
-//	}
-//	public void setOnRegister(List<CapacityDTO> onRegister) {
-//		this.onRegister = onRegister;
-//	}
-//	public List<CapacityDTO> getOffRegister() {
-//		return offRegister;
-//	}
-//	public void setOffRegister(List<CapacityDTO> offRegister) {
-//		this.offRegister = offRegister;
-//	}
 }
