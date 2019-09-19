@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.AllCapacityDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.CapacityDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.CustomerCapacityDTO;
@@ -18,12 +17,12 @@ import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityReposi
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityDetailRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.VesselSummaryRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
+
+/** https://confluence.agriculture.gov.ie/confluence/display/FISHERIES/Get+Capacity **/
 
 @Component
 @Service
