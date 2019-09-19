@@ -18,11 +18,6 @@ public interface CapacityPenaltyPointsRepository extends CrudRepository<PenaltyP
 			"left outer join TDFI_CAPACITYACCOUNTPOINTS b on a.CAPSEGMENTID = b.CAPSEGMENTID " + 
 			"left outer join TDFI_PENALTYPOINTS c on b.TDFI_PENALTYPOINTSID = c.TDFI_PENALTYPOINTSID " + 
 			"where a.CAPACCOUNTID = :capAccountId and a.inactiveind = 'N' and b.inactiveind = 'N' order by a.CAPACCOUNTID, b.CAPSEGMENTID", nativeQuery = true
-//			"select distinct TDFI_CAPACITYACCOUNTPOINTSID ID, ASSIGNEDPOINTS, EXPIRYDATE, PENALTYCOMMENT " + 
-//			"from TDFI_CAPACITYACCOUNTPOINTS a " + 
-//			"left outer join TDFI_PENALTYPOINTS b on a.TDFI_PENALTYPOINTSID = b.TDFI_PENALTYPOINTSID " + 
-//			"where a.CAPSEGMENTID = :capSegmentId " + 
-//			"and a.inactiveind = 'N' and b.inactiveind = 'N'", nativeQuery = true
 	)
 	public List<PenaltyPoints> findCustomerCapacityPenaltyPointsByCapAccountId (@Param("capAccountId") Integer capAccountId);
 }
