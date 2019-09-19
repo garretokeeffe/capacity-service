@@ -99,7 +99,7 @@ public class CustomerCapacityService {
 	
 	private void getCapacityDetailItems(Capacity capacity) {
 		// Get capacity detail ...
-		System.out.println("XXX - CustomerCapacityService.getCapacityDetailItems:" + capacity.getCapAccountId());
+		LOGGER.debug("XXX - CustomerCapacityService.getCapacityDetailItems:" + capacity.getCapAccountId());
 		capacity.setCapDetail(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(capacity.getCapAccountId()));
 		
 		// Get penalty points ...
