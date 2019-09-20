@@ -1,8 +1,10 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.repository;
 
+import java.util.concurrent.CompletableFuture;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.VesselSummary;
@@ -22,5 +24,6 @@ public interface VesselSummaryRepository extends CrudRepository<VesselSummary, I
 			"(select enginepower from vesselengine where VESSELID = v.vesselid and INACTIVEIND = 'N') kw " + 
 			"FROM vessel v WHERE inactiveind = 'N' AND v.vesselid = :vesselId ", nativeQuery = true
 	)
-	public VesselSummary findVesselSummaryByVesselId (@Param("vesselId") Integer vesselId);
+	@Async
+	public CompletableFuture<VesselSummary> findVesselSummaryByVesselId (@Param("vesselId") Integer vesselId);
 }
