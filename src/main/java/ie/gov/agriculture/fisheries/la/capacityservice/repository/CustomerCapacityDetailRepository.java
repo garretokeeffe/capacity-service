@@ -1,9 +1,11 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.repository;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
@@ -25,5 +27,6 @@ public interface CustomerCapacityDetailRepository extends CrudRepository<Capacit
 				"and a.capaccountid = :capAccountId " +
 			") A where CAPACITYAMOUNT > 0 order by CAPACITYTYPE, CAPACITYAMOUNT desc", nativeQuery = true
 	)
-	public List<CapacityDetail> findCapacityDetailByCapAccountId (@Param("capAccountId") Integer capAccountId);
+	@Async
+	public CompletableFuture<List<CapacityDetail>> findCapacityDetailByCapAccountId (@Param("capAccountId") Integer capAccountId);
 }
