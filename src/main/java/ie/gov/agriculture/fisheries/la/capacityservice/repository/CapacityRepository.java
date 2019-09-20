@@ -29,13 +29,13 @@ public interface CapacityRepository extends CrudRepository<Capacity, String> {
 			"case when (b.segmentid is null) then 0 else b.segmentid end fleetSubSegment, a.vesselid, c.vesselname, " + 
 			"case when (a.statusid = 6237299) then 'true' else 'false' end proposed, b.segmentid, " + 
 			"/*(select GROSSBALANCE from capaccountsegment where CAPACCOUNTID = a.capaccountid and CAPSEGMENTID = b.capsegmentid and UOMID = 91359) gt,*/ " + 
-			//"(select case when a.statusid = 6237299 /* IF PROPOSED */ then B.PROPOSEDBALANCE else B.GROSSBALANCE end from capaccountsegment B where CAPACCOUNTID = a.capaccountid and CAPSEGMENTID = b.capsegmentid and UOMID = 91290) kw, " +  
+			//"--(select case when a.statusid = 6237299 /* IF PROPOSED */ then B.PROPOSEDBALANCE else B.GROSSBALANCE end from capaccountsegment B where CAPACCOUNTID = a.capaccountid and CAPSEGMENTID = b.capsegmentid and UOMID = 91290) kw, " +  
 			"(select case when a.statusid = 6237299 /* IF PROPOSED */ then D.PROPOSEDBALANCE else D.GROSSBALANCE end from capaccountsegment D where D.CAPACCOUNTID = a.capaccountid and D.CAPSEGMENTID = b.capsegmentid and D.SEGMENTID = b.segmentid and D.UOMID = 91290) kw, " +
-			"a.CREATEDATE, ROW_NUMBER() OVER (partition by a.capaccountid ORDER BY a.capaccountid) CapAccRank, a.statusid " + 
+			"a.CREATEDATE, ROW_NUMBER() OVER (partition by a.capaccountid ORDER BY a.capaccountid, case when a.statusid = 6237299 /* IF PROPOSED */ then b.PROPOSEDBALANCE else b.GROSSBALANCE end) CapAccRank, a.statusid " + 
 			"from capacityaccount a " + 
 			"inner join capaccountsegment b on b.CAPACCOUNTID = a.CAPACCOUNTID " + 
 			"inner join vessel c on a.vesselid = c.vesselid " + 
-			"where ownerid = :ownerId and a.inactiveind = 'N' and b.inactiveind = 'N' " + 
+			"where ownerid = :ownerId and a.inactiveind = 'N' and b.inactiveind = 'N' and c.inactiveind = 'N' " + 
 			") A WHERE A.CapAccRank = 2 " +
 			"and (kw > 0 or (SELECT case when a.statusid = 6237299 then MAX(B.PROPOSEDBALANCE) else MAX(B.GROSSBALANCE) end FROM capaccountsegment B WHERE B.capaccountid = A.capaccountid AND B.UOMID = 91359 and B.segmentid = A.segmentid ) > 0) " +
 			"order by A.offregister, A.proposed, A.CREATEDATE", nativeQuery = true
