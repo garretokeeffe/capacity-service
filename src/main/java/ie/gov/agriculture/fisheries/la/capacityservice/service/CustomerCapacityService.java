@@ -9,7 +9,6 @@ import org.springframework.util.CollectionUtils;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.AllCapacityDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.CapacityDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.CustomerCapacityDTO;
-import ie.gov.agriculture.fisheries.la.capacityservice.entity.AllCapacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CustomerCapacity;
@@ -79,8 +78,8 @@ public class CustomerCapacityService {
 		List<Capacity> capacity = capacityRepository.findCapacityByOwnerId(ifisCustomerId);
 		
 		if (CollectionUtils.isEmpty(capacity)) {
-			LOGGER.info("No caapcitry information found for customer:{}", customerId);
-			throw new ResourceNotFoundException("No caapcitry information found for customer:" + customerId);
+			LOGGER.info("No capacity information found for customer:{}", customerId);
+			throw new ResourceNotFoundException("No capacity information found for customer:" + customerId);
 		}
 		
 		// Retrieve capacity detail items ...
@@ -175,7 +174,7 @@ public class CustomerCapacityService {
 	 * private void getCapacityDetailItems_Sync(Capacity capacity) throws ResourceNotFoundException;
 	 * @param capacity
 	 * @throws ResourceNotFoundException
-	 * Standard Sync function for fall back if Async version cannot be used ...
+	 * Standard Sync function for fall-back if Async version cannot be used ...
 	 */
 	private void getCapacityDetailItems_Sync(Capacity capacity) throws ResourceNotFoundException {
 		LOGGER.debug("CustomerCapacityService.getCapacityDetailItems_Sync:" + capacity.getCapAccountId());
