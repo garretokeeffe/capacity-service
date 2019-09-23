@@ -64,7 +64,7 @@ public class CapaityServiceApplication {
         executor.setCorePoolSize(10);
         executor.setMaxPoolSize(10);
         executor.setQueueCapacity(500);
-        executor.setThreadNamePrefix("Vessel-Service-");
+        executor.setThreadNamePrefix("Customer-Capacity-Service-");
         executor.initialize();
         return executor;
     }
