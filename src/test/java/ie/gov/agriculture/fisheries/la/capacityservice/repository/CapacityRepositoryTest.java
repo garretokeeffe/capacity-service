@@ -2,6 +2,7 @@ package ie.gov.agriculture.fisheries.la.capacityservice.repository;
 
 import static org.junit.Assert.assertTrue;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -75,13 +76,15 @@ public class CapacityRepositoryTest {
 		this.doLog("T E S T - " + testMthd);
 
 		try {
-			List<CapacityDetail> capacityDetail = customerCapacityDetailRepository.findCapacityDetailByCapAccountId(capAccountId);
+			CompletableFuture<List<CapacityDetail>> capacityDetail = customerCapacityDetailRepository.findCapacityDetailByCapAccountId(capAccountId);
 			
 			assertTrue(testMthd + " capacityDetail!=null assert true.", capacityDetail!=null);
 			
-			assertTrue(testMthd + " capacityDetail.size()>0 assert true.", capacityDetail.size()>0);
+			assertTrue(testMthd + " capacityDetail.get()!=null assert true.", capacityDetail.get()!=null);
 			
-			assertTrue(testMthd + " capacity.size()==4 assert true.", capacityDetail.size()==4);
+			assertTrue(testMthd + " capacityDetail.size()>0 assert true.", capacityDetail.get().size()>0);
+			
+			assertTrue(testMthd + " capacity.size()==4 assert true.", capacityDetail.get().size()==4);
 			
 			success = true;
 		} catch (Exception e) {
@@ -104,11 +107,11 @@ public class CapacityRepositoryTest {
 		this.doLog("T E S T - " + testMthd);
 
 		try {
-			VesselSummary vesselSummary = vesselSummaryRepository.findVesselSummaryByVesselId(vesselId);
+			CompletableFuture<VesselSummary> vesselSummary = vesselSummaryRepository.findVesselSummaryByVesselId(vesselId);
 			
-			assertTrue(testMthd + " vesselSummary!=null assert true.", vesselSummary!=null);
+			assertTrue(testMthd + " vesselSummary!=null assert true.", vesselSummary.get()!=null);
 			
-			assertTrue(testMthd + " 'BRIDGET CARMEL'.equalsIgnoreCase(vesselSummary.getName()) assert true.", "BRIDGET CARMEL".equalsIgnoreCase(vesselSummary.getName()));
+			assertTrue(testMthd + " 'BRIDGET CARMEL'.equalsIgnoreCase(vesselSummary.getName()) assert true.", "BRIDGET CARMEL".equalsIgnoreCase(vesselSummary.get().getName()));
 			
 			success = true;
 		} catch (Exception e) {
@@ -131,13 +134,15 @@ public class CapacityRepositoryTest {
 		this.doLog("T E S T - " + testMthd);
 
 		try {
-			List<PenaltyPoints> points = capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(capAccountId);
+			CompletableFuture<List<PenaltyPoints>> points = capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(capAccountId);
 			
 			assertTrue(testMthd + " points!=null assert true.", points!=null);
 			
-			assertTrue(testMthd + " points.size()>0 assert true.", points.size()>0);
+			assertTrue(testMthd + " points!=null assert true.", points.get()!=null);
 			
-			assertTrue(testMthd + " points.size()==4 assert true.", points.size()==4);
+			assertTrue(testMthd + " points.size()>0 assert true.", points.get().size()>0);
+			
+			assertTrue(testMthd + " points.size()==4 assert true.", points.get().size()==4);
 			
 			success = true;
 		} catch (Exception e) {
