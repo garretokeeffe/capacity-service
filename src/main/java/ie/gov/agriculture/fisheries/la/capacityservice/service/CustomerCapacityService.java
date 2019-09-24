@@ -69,7 +69,7 @@ public class CustomerCapacityService {
 		
 		AllCapacityDTO allCapacityDTO = null;
 		
-		String ifisCustomerId = (convertCcsToIfisID ? this.getIfisIdbyCcsId(customerId) : customerId);
+		String ifisCustomerId = (convertCcsToIfisID ? this.getIfisIdByCcsId(customerId) : customerId);
 		
 		allCapacityDTO = new AllCapacityDTO();
 		List<CapacityDTO> capacityDTO = new ArrayList<CapacityDTO>();
@@ -336,8 +336,8 @@ public class CustomerCapacityService {
 	 * @return List<VesselIdentification> 
 	 * @throws ResourceNotFoundException 
 	 */
-	public String getIfisIdbyCcsId(String ccsId) throws ResourceNotFoundException {
-		LOGGER.debug("VesselService.getIfisIdbyCcsId({})", ccsId);
+	public String getIfisIdByCcsId(String ccsId) throws ResourceNotFoundException {
+		LOGGER.debug("VesselService.getIfisIdByCcsId({})", ccsId);
 		
 		List<IfisWrapper> results = cCSRepository.findIfisIdByCcsId(ccsId);
 		
