@@ -39,9 +39,6 @@ public class CapacityServiceTest {
 			
 			assertTrue(testMthd + " '2957'.equalsIgnoreCase(allCapacityDTO.getOwnerId()) assert true.", "2957".equalsIgnoreCase(allCapacityDTO.getOwnerId()));
 			
-System.out.println("allCapacityDTO.getOnRegister().size:" + allCapacityDTO.getOnRegister().size());
-System.out.println("allCapacityDTO.getOffRegister().size():" + allCapacityDTO.getOffRegister().size());
-			
 			assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()>0 assert true.", allCapacityDTO.getOnRegister().size()>0);
 			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()>0 assert true.", allCapacityDTO.getOffRegister().size()>0);
 			
@@ -80,6 +77,33 @@ System.out.println("allCapacityDTO.getOffRegister().size():" + allCapacityDTO.ge
 			
 			assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()==1 assert true.", allCapacityDTO.getOnRegister().size()==3);
 			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()==4 assert true.", allCapacityDTO.getOffRegister().size()==4);
+			
+			success = true;
+		} catch (Exception e) {
+			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
+			e.printStackTrace();
+			success = false;
+		}
+
+		assertTrue("T E S T - " + testMthd + " assert true.", success);
+		
+		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
+	}
+	
+	@Test
+	public void getIfisIdByCcsId() {
+		testMthd = testClass + ".getIfisIdByCcsId().";
+		boolean success = true;
+		final String customerId = "FBY10063J";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			String ifisId = customerCapacityService.getIfisIdByCcsId(customerId);
+			
+			assertTrue(testMthd + " ifisId!=null assert true.", ifisId!=null);
+			
+			assertTrue(testMthd + " '150266852'.equalsIgnoreCase(ifisId) assert true.", "150266852".equalsIgnoreCase(ifisId));
 			
 			success = true;
 		} catch (Exception e) {
