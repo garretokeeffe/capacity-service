@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ie.gov.agriculture.fisheries.la.capacityservice.CapaityServiceApplication;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
+import ie.gov.agriculture.fisheries.la.capacityservice.entity.IfisWrapper;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.PenaltyPoints;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.VesselSummary;
 
@@ -37,6 +38,9 @@ public class CapacityRepositoryTest {
 	
 	@Autowired
 	CapacityPenaltyPointsRepository capacityPenaltyPointsRepository;
+	
+	@Autowired
+	CCSRepository cCSRepository;
 	
 	@Test
 	public void findCapacityByOwnerId() {
@@ -143,6 +147,36 @@ public class CapacityRepositoryTest {
 			assertTrue(testMthd + " points.size()>0 assert true.", points.get().size()>0);
 			
 			assertTrue(testMthd + " points.size()==4 assert true.", points.get().size()==4);
+			
+			success = true;
+		} catch (Exception e) {
+			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
+			e.printStackTrace();
+			success = false;
+		}
+
+		assertTrue("T E S T - " + testMthd + " assert true.", success);
+		
+		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
+	}
+	
+	@Test
+	public void findIfisIdByCcsId() {
+		testMthd = testClass + ".findIfisIdByCcsId().";
+		boolean success = true;
+		final String ccsId = "FBY10063J";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			List<IfisWrapper> results = cCSRepository.findIfisIdByCcsId(ccsId);
+			
+			assertTrue(testMthd + " results!=null assert true.", results!=null);
+			assertTrue(testMthd + " results.get(0)!=null assert true.", results.get(0)!=null);
+			
+			String ifisId = results.get(0).getIfisId();
+			
+			assertTrue(testMthd + " '150266852'.equalsIgnoreCase(ifisId) assert true.", "150266852".equalsIgnoreCase(ifisId));
 			
 			success = true;
 		} catch (Exception e) {
