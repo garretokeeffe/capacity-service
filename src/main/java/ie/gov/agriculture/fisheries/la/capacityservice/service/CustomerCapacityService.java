@@ -339,7 +339,8 @@ public class CustomerCapacityService {
 	public String getIfisIdbyCcsId(String ccsId) throws ResourceNotFoundException {
 		LOGGER.debug("VesselService.getIfisIdbyCcsId({})", ccsId);
 		
-		List<IfisWrapper> results = cCSRepository.findIfisIdbyCcsId(ccsId);
+		List<IfisWrapper> results = cCSRepository.findIfisIdByCcsId(ccsId);
+		
 		if (results==null || CollectionUtils.isEmpty(results)) {
 			LOGGER.info("Unable to find IFIS-Id for ccsId {}", ccsId);
 			throw new ResourceNotFoundException("No IFIS-ID found for ccsId:" + ccsId);
