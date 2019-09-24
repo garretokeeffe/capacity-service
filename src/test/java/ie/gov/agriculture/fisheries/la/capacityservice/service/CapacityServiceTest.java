@@ -46,7 +46,7 @@ System.out.println("allCapacityDTO.getOffRegister().size():" + allCapacityDTO.ge
 			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()>0 assert true.", allCapacityDTO.getOffRegister().size()>0);
 			
 			assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()==1 assert true.", allCapacityDTO.getOnRegister().size()==3);
-			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()==2 assert true.", allCapacityDTO.getOffRegister().size()==5);
+			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()==4 assert true.", allCapacityDTO.getOffRegister().size()==4);
 			
 			success = true;
 		} catch (Exception e) {
@@ -79,7 +79,7 @@ System.out.println("allCapacityDTO.getOffRegister().size():" + allCapacityDTO.ge
 			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()>0 assert true.", allCapacityDTO.getOffRegister().size()>0);
 			
 			assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()==1 assert true.", allCapacityDTO.getOnRegister().size()==3);
-			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()==2 assert true.", allCapacityDTO.getOffRegister().size()==5);
+			assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()==4 assert true.", allCapacityDTO.getOffRegister().size()==4);
 			
 			success = true;
 		} catch (Exception e) {
