@@ -19,6 +19,9 @@ import lombok.ToString;
 @Getter @Setter @NoArgsConstructor @ToString
 public class CustomerCapacity {
 	@Id
+	@Column(name = "ID")
+	private String Id;
+	
 	@Column(name = "capaccountid")
 	private String capAccountId;
 	
