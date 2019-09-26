@@ -12,9 +12,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityRepositoryTest;
 
-@ActiveProfiles(profiles = "tomcat")
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = CapaityServiceApplication.class)
 public class AppTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CapacityRepositoryTest.class);
 	
