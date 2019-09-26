@@ -19,14 +19,14 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.MDC;
 
 @RestController
-@RequestMapping("sfos")
+@RequestMapping("sfos/capacity")
 @Api(value = "customerCapacityServices")
 public class CustomerCapacityController {
 	@Autowired
 	CustomerCapacityService customerCapacityService;
 	
 	@ApiOperation(value = "Retrieve complete All Capacity information for an individual customer using ccs customer id [e.g. http://localhost:8080/sfos/capacity/ccs/FBY10086C]")
-	@GetMapping(path = "/capacity/ccs/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/ccs/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AllCapacityDTO> getCustomerCapacityByCcsID(HttpServletRequest request, @PathVariable(required = true) String customerId) throws Exception {
 		this.pushUserInfoToThread(request);
 		
@@ -36,7 +36,7 @@ public class CustomerCapacityController {
 	}
 	
 	@ApiOperation(value = "Retrieve complete All Capacity information for an individual customer using ifis customer id [e.g. http://localhost:8080/sfos/capacity/ifis/2957]")
-	@GetMapping(path = "/capacity/ifis/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/ifis/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AllCapacityDTO> getCustomerCapacityByIfisID(HttpServletRequest request, @PathVariable(required = true) String customerId) throws Exception {
 		this.pushUserInfoToThread(request);
 		
@@ -46,7 +46,7 @@ public class CustomerCapacityController {
 	}
 
 	@ApiOperation(value = "Retrieve raw capacity information for an individual IFIS customer id [e.g. http://localhost:8080/sfos/capacity/ifisraw/23630]")
-	@GetMapping(path = "/capacity/ifisraw/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/ifisraw/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CustomerCapacityDTO>> getCustomerCapacityInformation(HttpServletRequest request, @PathVariable(required = true) String customerId) throws Exception {
 		this.pushUserInfoToThread(request);
 		
