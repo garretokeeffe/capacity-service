@@ -45,8 +45,8 @@ public class CustomerCapacityController {
 		return new ResponseEntity<AllCapacityDTO>(allCapacityDTO, HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "Retrieve basic capacity information for an individual customer [e.g. http://localhost:8080/sfos/customer/capacity/23630]")
-	@GetMapping(path = "/customer/basic_capacity/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Retrieve raw capacity information for an individual IFIS customer id [e.g. http://localhost:8080/sfos/capacity/ifisraw/23630]")
+	@GetMapping(path = "/capacity/ifisraw/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<CustomerCapacityDTO>> getCustomerCapacityInformation(HttpServletRequest request, @PathVariable(required = true) String customerId) throws Exception {
 		this.pushUserInfoToThread(request);
 		
@@ -60,10 +60,5 @@ public class CustomerCapacityController {
 		MDC.put("name", up.getName());
 		MDC.put("userName", up.getUsername());
 		MDC.put("email", up.getEmail());
-		
-//		System.out.println("XXX - CustomerCapacityController.pushUserInfoToThread:" + request);
-//		System.out.println("XXX - CustomerCapacityController.pushUserInfoToThread:" + up.getName());
-//		System.out.println("XXX - CustomerCapacityController.pushUserInfoToThread:" + up.getUsername());
-//		System.out.println("XXX - CustomerCapacityController.pushUserInfoToThread:" + up.getEmail());
 	}
 }
