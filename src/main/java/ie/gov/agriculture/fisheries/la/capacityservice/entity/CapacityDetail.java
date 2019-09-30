@@ -40,6 +40,9 @@ public class CapacityDetail {
 	@Column(name = "POINTSASSIGNED")
 	private String POINTSASSIGNED;
 	
+	@Column(name = "CAP_EXP_WITHIN_3_MONTHS")
+	private String capacityExpiringWithin3Months;
+	
 	@JsonInclude()
 	@Transient
 	private List<TrackRecord> trackRecord;
