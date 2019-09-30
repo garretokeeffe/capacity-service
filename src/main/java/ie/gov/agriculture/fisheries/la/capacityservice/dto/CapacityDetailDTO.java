@@ -13,6 +13,7 @@ public class CapacityDetailDTO {
 	private String capacityType; // 'GT' | 'kW'
 	private String offRegisterDate; // dd/mm/yyyy
 	private String expiryDate; // dd/mm/yyyy
+	private String capacityExpiringWithin3Months;
 	private String sourceVesselId;       // future-proof, in case we need to do searches on the source vessel
 	private String sourceVesselName;
 	private String POINTSASSIGNED;
