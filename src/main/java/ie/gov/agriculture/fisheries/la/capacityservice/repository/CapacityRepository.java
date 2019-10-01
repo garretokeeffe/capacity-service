@@ -35,7 +35,7 @@ public interface CapacityRepository extends CrudRepository<Capacity, String> {
 			"    WHERE ca.ownerid = :ownerId AND ca.capaccountid = cas.capaccountid " +  
 			"    and ca.vesselid = v.vesselid AND ca.STATUSID in (6237298, 6237297, 6237299) " +  
 			"    AND cas.inactiveind = 'N' AND ca.inactiveind = 'N' AND ca.closedind = 'N' AND (v.inactiveind = 'N' and v.statusid is not null) " +
-			"    AND CAST(COALESCE(CAPACITYEXPIRYDATE, Current_Timestamp+1) AS DATE) > CAST(Current_Timestamp AS DATE) /* Preclude expired capacity */ " +  
+			"    AND CAST(COALESCE(ADD_MONTHS(OFFREGDATE,24),Current_Timestamp+1) AS DATE) > CAST(Current_Timestamp AS DATE) /* Preclude expired capacity */ " +  
 			"    HAVING (SUM(DECODE(cas.uomid, '91359', cas.grossbalance, 0)) > 0) OR (SUM(DECODE(cas.uomid, '91290', cas.grossbalance, 0)) > 0) " +  
 			"       OR (SUM(DECODE(cas.uomid, '91290', cas.proposedbalance, 0)) > 0) OR (SUM(DECODE(cas.uomid, '91290', cas.proposedbalance, 0)) > 0) " +  
 			"    GROUP BY ca.capaccountid, ca.ownerid, cas.segmentid, ca.STATUSID, ca.VESSELID " +  
