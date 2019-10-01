@@ -20,9 +20,9 @@ import lombok.ToString;
 @Getter
 @ToString
 public class UserPrincipal {
-	private String username;
-	private String name;
-	private String email;
+	private String username = "[Unknown]";
+	private String name = "[Unknown]";
+	private String email = "[Unknown]";
 	private Collection<GrantedAuthority> roles;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserPrincipal.class);
@@ -38,13 +38,19 @@ public class UserPrincipal {
 	private UserPrincipal(HttpServletRequest request) {
 		try {
 			KeycloakAuthenticationToken token = (KeycloakAuthenticationToken) request.getUserPrincipal();
-			AccessToken accessToken = ((SimpleKeycloakAccount) token.getDetails()).getKeycloakSecurityContext()
-					.getToken();
+			
+			if (token==null) {
+				LOGGER.info("Failed reading user informtion from request: token is null!");
+			}
+			else {
+				AccessToken accessToken = ((SimpleKeycloakAccount) token.getDetails()).getKeycloakSecurityContext()
+						.getToken();
 
-			username = accessToken.getPreferredUsername();
-			name = accessToken.getName();
-			email = accessToken.getEmail();
-			roles = token.getAuthorities();
+				username = accessToken.getPreferredUsername();
+				name = accessToken.getName();
+				email = accessToken.getEmail();
+				roles = token.getAuthorities();
+			}
 		} catch (Exception e) {
 			LOGGER.error("Failed reading user informtion from request", e);
 		}
