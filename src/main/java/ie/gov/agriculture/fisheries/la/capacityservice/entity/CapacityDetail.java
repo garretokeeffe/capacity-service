@@ -38,7 +38,7 @@ public class CapacityDetail {
 	private String sourceVesselName;
 	
 	@Column(name = "POINTSASSIGNED")
-	private String POINTSASSIGNED;
+	private String pointsAssigned;
 	
 	@Column(name = "CAP_EXP_WITHIN_3_MONTHS")
 	private String capacityExpiringWithin3Months;
