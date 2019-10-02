@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ie.gov.agriculture.fisheries.la.capacityservice.CapaityServiceApplication;
+import ie.gov.agriculture.fisheries.la.capacityservice.repository.CCSRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityPenaltyPointsRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityDetailRepository;
@@ -62,7 +63,10 @@ public class CapacityControllerTest {
 	CapacityPenaltyPointsRepository capacityPenaltyPointsRepository;
 	
 	@Mock
-    private ModelMapper modelMapper;
+	CCSRepository ccsRepository;
+	
+	@Mock
+    ModelMapper modelMapper;
 	
 	@Before
 	public void setup() {
@@ -74,18 +78,28 @@ public class CapacityControllerTest {
 	public void getCustomerCapacity() {
 		testMthd = testClass + ".getCustomerCapacity().";
 		boolean success = true;
-		final String customerId = "4052";
+		final String ccsFishBuyerId = "FBY10086C";
+		final String ifisCustomerId = "4052";
 		
 		this.doLog("T E S T - " + testMthd);
 
 		try {
-			// Postive test ...
-			MvcResult mvcResult = mockMvc.perform(get("/sfos/capacity/ccs/" + customerId).accept(MediaType.APPLICATION_JSON)).andReturn();
+			// ####################### Get by CCS ID ####################### ...
+			MvcResult mvcResult = mockMvc.perform(get("/sfos/capacity/ccs/" + ccsFishBuyerId).accept(MediaType.APPLICATION_JSON)).andReturn();
 			assertEquals(mvcResult.getResponse().getStatus(), HttpStatus.OK.value());
 			assertEquals(content()!=null, true);
 			
-			// Negative test ...
-			mvcResult = mockMvc.perform(get("/sfos/capacity/ccs-INVALID/" + customerId).accept(MediaType.APPLICATION_JSON)).andReturn();
+			// Negative test - Invalid URL ...
+			mvcResult = mockMvc.perform(get("/sfos/capacity/ccs-INVALID/" + ccsFishBuyerId).accept(MediaType.APPLICATION_JSON)).andReturn();
+			assertEquals(mvcResult.getResponse().getStatus(), HttpStatus.NOT_FOUND.value());
+			
+			// ####################### Get by IFIS ID ####################### ...
+			mvcResult = mockMvc.perform(get("/sfos/capacity/ifis/" + ifisCustomerId).accept(MediaType.APPLICATION_JSON)).andReturn();
+			assertEquals(mvcResult.getResponse().getStatus(), HttpStatus.OK.value());
+			assertEquals(content()!=null, true);
+			
+			// Negative test - Invalid URL ...
+			mvcResult = mockMvc.perform(get("/sfos/capacity/ifis-INVALID/" + ifisCustomerId).accept(MediaType.APPLICATION_JSON)).andReturn();
 			assertEquals(mvcResult.getResponse().getStatus(), HttpStatus.NOT_FOUND.value());
 			
 			success = true;
