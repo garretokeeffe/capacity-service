@@ -69,7 +69,7 @@ stages {
     stage('Build') {
 		when{
 		expression {
-			return branchName == 'development' && ${currentBuild.currentResult} !='FAILURE' ;
+			return branchName == 'development' && currentBuild.currentResult !='FAILURE' ;
 		}
 	   }
 	
