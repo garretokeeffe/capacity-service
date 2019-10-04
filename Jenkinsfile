@@ -142,7 +142,7 @@ stages {
           
         steps {
            echo "Pushing The JAR Into OpenShift OpenJDK-Container"
-		   echo ${currentBuild.currentResult}
+		 
             script {
                 openshift.withCluster( clusterName ) {
                     openshift.withProject( project ) {
