@@ -14,36 +14,46 @@ pipeline {
 	 openshift_project_name="capacity-service"
 	 sonar_project_name="capacity-service"
 	 jar="capacity-service-0.0.1-SNAPSHOT.jar"
+	  recipientList='joydip.kumar@agriculture.gov.ie,paul.forde@agriculture.gov.ie'
   }
 
   post {
+  
+		//Send email and send the status to gitlab on success and failure at the end of build
+  
       failure {
 		 withCredentials([string(credentialsId: 'token', variable: 'token')]) {
         sh 'curl --request POST --header "PRIVATE-TOKEN:  ${token}" "https://rhosgitlab1.agriculture.gov.ie/api/v4/projects/"$gitlab_project_path"/statuses/$(git rev-parse HEAD)?state=failed"'
 		}
+		
+		emailext body: "   ${env.JOB_NAME} build #${env.BUILD_NUMBER}  Status : ${currentBuild.currentResult} \n More info at: ${env.BUILD_URL} ",
+                recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']],
+				to: $recipientList,
+                subject: "Jenkins Build Job ${env.JOB_NAME} : ${currentBuild.currentResult} "
       }
       success {
 		 withCredentials([string(credentialsId: 'token', variable: 'token')]) {
 	    	sh 'curl --request POST --header "PRIVATE-TOKEN: ${token}" "https://rhosgitlab1.agriculture.gov.ie/api/v4/projects/"$gitlab_project_path"/statuses/$(git rev-parse HEAD)?state=success"'
 		}
+		
+		   script {
+                if( branchName == 'development' ){
+                   emailext body: "  ${env.JOB_NAME} build #${env.BUILD_NUMBER}  Status : ${currentBuild.currentResult} \n More info at: ${env.BUILD_URL} ",
+					recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']],
+					to: $recipientList,
+					subject: "Jenkins Build Job ${env.JOB_NAME} : ${currentBuild.currentResult} "
+                }
+               
+            }
 	  }
 	  
-	     always {
-            echo 'I will always say Hello again!'
-            
-            emailext body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']],
-                subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}"
-            
-        }
-  
     }
 
 
 stages {
      
 
-	 
+	// update the running status to gitlab commit 
 	stage('Initiating'){
 	  steps {
 	  
@@ -54,50 +64,47 @@ stages {
 	
 	}
   
-    
-        
+ 
+ 
     stage('Build') {
         steps {
-			try{
+			
 				configFileProvider([configFile(fileId: 'fisheries-settings', variable: 'MAVEN_SETTINGS')]) {
-					echo "Config: $MAVEN_SETTINGS"
-					sh   'mvn -s $MAVEN_SETTINGS clean package '
+				
+					
+						echo "Config: $MAVEN_SETTINGS"
+						sh   'mvn -s $MAVEN_SETTINGS clean package '
+					
 				}
-			}catch (err){
-				 echo err
-				 exit
-			}
-           
-        }
+			
+				
+	    }
         
     }
+	
+	// Update the minimum coverage here 
 	 stage('Test') {
 	
 	    steps {
 		
-			try{
+			
 				step([$class: 'JacocoPublisher', 
 				  execPattern: 'target/*.exec',
 				  classPattern: 'target/classes',
 				  sourcePattern: 'src/main/java',
 				  exclusionPattern: 'src/test*',
 				  changeBuildStatus: true,
-				  minimumInstructionCoverage: '60',
+				  minimumInstructionCoverage: '70',
 				  maximumInstructionCoverage: '95',
 				])
-				
-			}catch (err){
-				 echo err
-				 exit
-			}
-        
-        }
-		post {
+			
+			
 			always {
 				junit 'target/surefire-reports/*.xml'
 			}
-           
-		}
+        
+        }
+	
 	} 
 
 	
