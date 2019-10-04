@@ -58,11 +58,15 @@ stages {
         
     stage('Build') {
         steps {
-       
-            configFileProvider([configFile(fileId: 'fisheries-settings', variable: 'MAVEN_SETTINGS')]) {
-                echo "Config: $MAVEN_SETTINGS"
-                sh   'mvn -s $MAVEN_SETTINGS clean package '
-            }
+			try{
+				configFileProvider([configFile(fileId: 'fisheries-settings', variable: 'MAVEN_SETTINGS')]) {
+					echo "Config: $MAVEN_SETTINGS"
+					sh   'mvn -s $MAVEN_SETTINGS clean package '
+				}
+			}catch (err){
+				 echo err
+				 exit
+			}
            
         }
         
@@ -70,15 +74,22 @@ stages {
 	 stage('Test') {
 	
 	    steps {
-	        step([$class: 'JacocoPublisher', 
-              execPattern: 'target/*.exec',
-              classPattern: 'target/classes',
-              sourcePattern: 'src/main/java',
-              exclusionPattern: 'src/test*',
-              changeBuildStatus: true,
-              minimumInstructionCoverage: '60',
-              maximumInstructionCoverage: '95',
-            ])
+		
+			try{
+				step([$class: 'JacocoPublisher', 
+				  execPattern: 'target/*.exec',
+				  classPattern: 'target/classes',
+				  sourcePattern: 'src/main/java',
+				  exclusionPattern: 'src/test*',
+				  changeBuildStatus: true,
+				  minimumInstructionCoverage: '60',
+				  maximumInstructionCoverage: '95',
+				])
+				
+			}catch (err){
+				 echo err
+				 exit
+			}
         
         }
 		post {
@@ -118,7 +129,7 @@ stages {
 	
 		when{
 		expression {
-			return branchName == 'development';
+			return branchName == 'development' ;
 		}
 	   }
           
