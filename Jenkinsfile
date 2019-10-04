@@ -67,12 +67,6 @@ stages {
  
  
     stage('Build') {
-		when{
-		expression {
-			return branchName == 'development' && currentBuild.currentResult !='FAILURE' ;
-		}
-	   }
-	
         steps {
 			
 				configFileProvider([configFile(fileId: 'fisheries-settings', variable: 'MAVEN_SETTINGS')]) {
@@ -142,7 +136,7 @@ stages {
 	
 		when{
 		expression {
-			return branchName == 'development' && ${currentBuild.currentResult} !='FAILURE' ;
+			return branchName == 'development' && currentBuild.currentResult !='FAILURE' ;
 		}
 	   }
           
