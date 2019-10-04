@@ -28,7 +28,7 @@ pipeline {
 		
 		emailext body: "   ${env.JOB_NAME} build #${env.BUILD_NUMBER}  Status : ${currentBuild.currentResult} \n More info at: ${env.BUILD_URL} ",
                 recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']],
-					to: ${recipientList},
+				to: recipientList,
                 subject: "Jenkins Build Job ${env.JOB_NAME} : ${currentBuild.currentResult} "
       }
       success {
@@ -40,7 +40,7 @@ pipeline {
                 if( branchName == 'development' ){
                    emailext body: "  ${env.JOB_NAME} build #${env.BUILD_NUMBER}  Status : ${currentBuild.currentResult} \n More info at: ${env.BUILD_URL} ",
 					recipientProviders: [[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']],
-						to: ${recipientList},
+					to: recipientList,
 					subject: "Jenkins Build Job ${env.JOB_NAME} : ${currentBuild.currentResult} "
                 }
                
@@ -136,12 +136,13 @@ stages {
 	
 		when{
 		expression {
-			return branchName == 'development' ;
+			return branchName == 'development' && ${currentBuild.currentResult} !='FAILURE' ;
 		}
 	   }
           
         steps {
            echo "Pushing The JAR Into OpenShift OpenJDK-Container"
+		   echo ${currentBuild.currentResult}
             script {
                 openshift.withCluster( clusterName ) {
                     openshift.withProject( project ) {
