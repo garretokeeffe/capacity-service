@@ -110,7 +110,7 @@ stages {
 	
 
     
- /*stage('Sonarqube') {
+ stage('Sonarqube') {
         environment {
             scannerHome = tool 'SonarQube Scanner'
         }
@@ -131,7 +131,7 @@ stages {
        
         
     }
- */
+
     stage('Deploy') {
 	
 		when{
