@@ -82,32 +82,7 @@ stages {
         
     }
 	
-	// Update the minimum coverage here 
-	 stage('Test') {
-	
-	    steps {
-		
-			
-				step([$class: 'JacocoPublisher', 
-				  execPattern: 'target/*.exec',
-				  classPattern: 'target/classes',
-				  sourcePattern: 'src/main/java',
-				  exclusionPattern: 'src/test*',
-				  changeBuildStatus: true,
-				  minimumInstructionCoverage: '70',
-				  maximumInstructionCoverage: '95',
-				])
-			
-			
-			always {
-				junit 'target/surefire-reports/*.xml'
-			}
-        
-        }
-	
-	} 
 
-	
 
     
  stage('Sonarqube') {
