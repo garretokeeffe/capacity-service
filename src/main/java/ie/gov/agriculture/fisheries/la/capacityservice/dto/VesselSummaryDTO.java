@@ -9,7 +9,7 @@ import lombok.ToString;
 public class VesselSummaryDTO {
 	private Integer id;
 	private String name;
-	private String status; // VESSEL STATUS REFERENCE DATA
+	private Integer status; // VESSEL STATUS REFERENCE DATA
 	private String cfr;
 	private String prn; // port reg number
 	private String gt; // Dimensions - tonnage

@@ -19,7 +19,7 @@ public class VesselSummary {
 	private String name;
 
 	@Column(name = "status")
-	private String status; // VESSEL STATUS REFERENCE DATA
+	private Integer status; // VESSEL STATUS REFERENCE DATA
 		 
 	@Column(name = "cfr")
 	private String cfr;
