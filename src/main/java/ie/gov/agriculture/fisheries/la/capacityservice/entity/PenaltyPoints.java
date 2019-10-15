@@ -10,9 +10,9 @@ import lombok.ToString;
 
 @Entity
 @Getter @Setter @NoArgsConstructor @ToString
-public class PenaltyPoints {	
+public class PenaltyPoints {
 	@Id
-	@Column(name = "ID") //TDFI_CAPACITYACCOUNTPOINTSID
+	@Column(name = "ID")
 	private Long ID;
 	
 	@Column(name = "ASSIGNEDPOINTS")
@@ -22,7 +22,7 @@ public class PenaltyPoints {
 	private String EXPIRYDATE;
 	
 	@Column(name = "PENALTYCOMMENT")
-	private Long PENALTYCOMMENT;
+	private String PENALTYCOMMENT;
 
 	@Column(name = "CAPACCOUNTID")
 	private String CAPACCOUNTID;

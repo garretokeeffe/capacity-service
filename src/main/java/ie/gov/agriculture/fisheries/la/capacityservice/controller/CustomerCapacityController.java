@@ -30,7 +30,7 @@ public class CustomerCapacityController {
 	public ResponseEntity<AllCapacityDTO> getCustomerCapacityByCcsID(HttpServletRequest request, @PathVariable(required = true) String customerId) throws Exception {
 		this.pushUserInfoToThread(request);
 		
-		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true);
+		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true, true);
 		
 		return new ResponseEntity<AllCapacityDTO>(allCapacityDTO, HttpStatus.OK);
 	}
@@ -40,7 +40,7 @@ public class CustomerCapacityController {
 	public ResponseEntity<AllCapacityDTO> getCustomerCapacityByIfisID(HttpServletRequest request, @PathVariable(required = true) String customerId) throws Exception {
 		this.pushUserInfoToThread(request);
 		
-		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false);
+		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, true);
 		
 		return new ResponseEntity<AllCapacityDTO>(allCapacityDTO, HttpStatus.OK);
 	}

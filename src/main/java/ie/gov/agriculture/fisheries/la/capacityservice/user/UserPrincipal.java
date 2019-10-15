@@ -20,9 +20,11 @@ import lombok.ToString;
 @Getter
 @ToString
 public class UserPrincipal {
-	private String username = "[Unknown]";
-	private String name = "[Unknown]";
-	private String email = "[Unknown]";
+	private static final String UNKNOWN = "[Unknown]";
+	
+	private String username = UNKNOWN;
+	private String name = UNKNOWN;
+	private String email = UNKNOWN;
 	private Collection<GrantedAuthority> roles;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserPrincipal.class);

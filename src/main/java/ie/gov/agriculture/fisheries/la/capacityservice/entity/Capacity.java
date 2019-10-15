@@ -39,10 +39,10 @@ public class Capacity {
 	private Integer fleetSubSegment; // FLEET SUBSEGMENT REFERENCE DATA
 	
 	@Column(name = "gt")
-	private String gt; // this may be a subset of the entire capacity of the vessel
+	private double gt; // this may be a subset of the entire capacity of the vessel
 	
 	@Column(name = "kw")
-	private String kw; // this may be a subset of the entire capacity of the vessel
+	private double kw; // this may be a subset of the entire capacity of the vessel
 
 	@Column(name = "vesselid")
 	private Integer vesselId;
@@ -60,5 +60,9 @@ public class Capacity {
 
 	@JsonInclude()
 	@Transient
-	private List<PenaltyPoints> penaltyPoints;
+	private PenaltyPoints penaltyPoints; // Used for Off-Register Capacity only (see CapacityDetail entity for Off-Register) ...
+	
+	public boolean isOnRegister () {
+		return this.getOffRegister().equalsIgnoreCase("false");
+	}
 }

@@ -62,14 +62,13 @@ public class SwaggerConfig {
 				.build()
 				.securitySchemes(buildSecurityScheme())
 				.securityContexts(buildSecurityContext());
-				//.securityContexts(Arrays.asList(securityContext()));
 	}
 
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
 				.title(TITLE)
 				.description(DESCRIPTION)
-				.contact(new Contact("Stephen McCosker", "", "stephen.mccosker@agriculture.gov.ie")).version("1.0.0")
+				.contact(new Contact("Stephen McCosker", "", "stephen.mccosker@agriculture.gov.ie")).version(VERSION)
 				.version(VERSION).build();
 	}
 

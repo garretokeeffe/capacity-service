@@ -2,6 +2,7 @@ package ie.gov.agriculture.fisheries.la.capacityservice.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,10 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class CustomerCapacityService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerCapacityService.class);
+	private static final String CUSTOMER_CAP_ERROR_MESSAGE = "No capacity detail found for capacity account: {}";
+	private static final String CAP_DETAIL_ERROR_MESSAGE = "Exception processing capacity detail items for customer:";
+	private static final String PEN_POINTS_ERROR_MESSAGE = "No penality points found for capacity account: {}";
+	private static final String VESSEL_SUM_ERROR_MESSAGE = "Vessel summary information not found for capacity account: {}";
 
 	@Autowired
 	CustomerCapacityRepository customerCapacityRepository;
@@ -64,8 +69,8 @@ public class CustomerCapacityService {
 	 * @return
 	 * @throws ResourceNotFoundException
 	 */
-	public AllCapacityDTO getAllCapacity (String customerId, boolean convertCcsToIfisID) throws ResourceNotFoundException {
-		LOGGER.debug("CustomerCapacityService.getCapacity(" + customerId + ")");
+	public AllCapacityDTO getAllCapacity (String customerId, boolean convertCcsToIfisID, boolean useAsyncCallForDetail) throws ResourceNotFoundException, InterruptedException, ExecutionException {
+		LOGGER.debug("CustomerCapacityService.getCapacity:{}", customerId);
 		
 		AllCapacityDTO allCapacityDTO = null;
 		
@@ -78,19 +83,37 @@ public class CustomerCapacityService {
 		List<Capacity> capacity = capacityRepository.findCapacityByOwnerId(ifisCustomerId);
 		
 		if (CollectionUtils.isEmpty(capacity)) {
-			LOGGER.info("No capacity information found for customer:{}", customerId);
+			LOGGER.info("No capacity information found for customer: {}", customerId);
 			throw new ResourceNotFoundException("No capacity information found for customer:" + customerId);
 		}
 		
 		// Retrieve capacity detail items ...
-		capacity.forEach(item -> {
-			try {
-				this.getCapacityDetailItems_ASync(item);
-			} catch (ResourceNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		});
+		if (useAsyncCallForDetail) { /* Dummy edit for Joydip */
+			capacity.forEach(item -> {
+				try {
+					this.getCapacityDetailItems_Sync(item);
+				} catch(InterruptedException e) {
+					LOGGER.error(CAP_DETAIL_ERROR_MESSAGE + customerId, e);
+					Thread.currentThread().interrupt();
+				} 
+				catch (ResourceNotFoundException |  ExecutionException e) {
+					LOGGER.error(CAP_DETAIL_ERROR_MESSAGE + customerId, e);
+				}
+			});
+		}
+		else {
+			capacity.forEach(item -> {
+				try {
+					this.getCapacityDetailItems_Sync(item);
+				} catch(InterruptedException e) {
+					LOGGER.error(CAP_DETAIL_ERROR_MESSAGE + customerId, e);
+					Thread.currentThread().interrupt();
+				} 
+				catch (ResourceNotFoundException |  ExecutionException e) {
+					LOGGER.error(CAP_DETAIL_ERROR_MESSAGE + customerId, e);
+				}
+			});
+		}
 		
 		// Convert capacity items to DTO ...
 		capacity.forEach(item -> capacityDTO.add(this.convertCapacityToDTO(item)));
@@ -116,8 +139,8 @@ public class CustomerCapacityService {
 	 * @throws ResourceNotFoundException
 	 * Async function to run call in parallel
 	 */
-	private void getCapacityDetailItems_ASync(Capacity capacity) throws ResourceNotFoundException {
-		LOGGER.debug("CustomerCapacityService.getCapacityDetailItems_ASync:" + capacity.getCapAccountId());
+	private void getCapacityDetailItems_ASync(Capacity capacity) throws ResourceNotFoundException, InterruptedException, ExecutionException {
+		LOGGER.debug("CustomerCapacityService.getCapacityDetailItems_ASync: {}", capacity.getCapAccountId());
 		
 		final long startTime = System.currentTimeMillis();
 		int capAccountId = capacity.getCapAccountId();
@@ -127,21 +150,25 @@ public class CustomerCapacityService {
 		
 		CompletableFuture<List<CapacityDetail>> capacityDetail = null;
 		try {
-			capacityDetail = this.getCapacityDetailByCapAccountId(capAccountId);
+			capacityDetail = this.getCapacityDetailByCapAccountId(capacity);
 			queriedObjects.add(capacityDetail);
 		}
 		catch (ResourceNotFoundException e) {
-			LOGGER.debug("No capacity detail found for capacity account:{}", capAccountId);
+			LOGGER.debug(CUSTOMER_CAP_ERROR_MESSAGE, capAccountId);
+			throw e;
 		}
 		
-		// Get penalty points ...
-		CompletableFuture<List<PenaltyPoints>> points = null;
+		// For OffRegister, get rolled-up penalty points with latest expiry date if applicable ...
+		CompletableFuture<PenaltyPoints> points = null;
 		try {
-			points = this.getCustomerCapacityPenaltyPointsByCapAccountId(capAccountId);
-			queriedObjects.add(points);
+			if (!capacity.isOnRegister()) {
+				points = this.getRolledUpPenaltyPointsWithLatestExpiryDate(capAccountId);
+				queriedObjects.add(points);
+			}
 		}
 		catch (ResourceNotFoundException e) {
-			LOGGER.debug("No penality points found for capacity account:{}", capAccountId);
+			LOGGER.debug(PEN_POINTS_ERROR_MESSAGE, capAccountId);
+			throw e;
 		}
 		
 		// Get vessel summary ...
@@ -151,7 +178,8 @@ public class CustomerCapacityService {
 			queriedObjects.add(vesselSummary);
 		}
 		catch (ResourceNotFoundException e) {
-			LOGGER.debug("Vessel summary information not found for capacity account:{}", capAccountId);
+			LOGGER.debug(VESSEL_SUM_ERROR_MESSAGE, capAccountId);
+			throw e;
 		}
 		
 		CompletableFuture[] futures = queriedObjects.toArray(new CompletableFuture[queriedObjects.size()]);
@@ -159,15 +187,15 @@ public class CustomerCapacityService {
 		
 		//Queries have completed, add the components to the VesselDTO
 		try {
-			capacity.setCapDetail(capacityDetail.get());
-			capacity.setPenaltyPoints(points.get());
-			capacity.setVesselSummary(vesselSummary.get());
+			capacity.setCapDetail(capacityDetail==null ? null : capacityDetail.get());
+			capacity.setPenaltyPoints(points==null ? null : points.get());
+			capacity.setVesselSummary(vesselSummary==null ? null : vesselSummary.get());
 		} catch (InterruptedException | ExecutionException e) {
-			LOGGER.error("Error handling Capacity Detail Items (ASync), cap account :{}", capAccountId, e);
-			throw new ResourceNotFoundException(e.getMessage());
+			LOGGER.error("Error handling Capacity Detail Items (ASync), cap account: {}", capAccountId, e);
+			throw e;
 		}
 		
-		LOGGER.info("CustomerCapacityService.getCapacityDetailItems_ASync({}) EElapsed time(ms):{}", capAccountId, (System.currentTimeMillis() - startTime));
+		LOGGER.info("CustomerCapacityService.getCapacityDetailItems_ASync({}) EElapsed time(ms): {}", capAccountId, (System.currentTimeMillis() - startTime));
     }
 	
 	/***
@@ -176,8 +204,8 @@ public class CustomerCapacityService {
 	 * @throws ResourceNotFoundException
 	 * Standard Sync function for fall-back if Async version cannot be used ...
 	 */
-	private void getCapacityDetailItems_Sync(Capacity capacity) throws ResourceNotFoundException {
-		LOGGER.debug("CustomerCapacityService.getCapacityDetailItems_Sync:" + capacity.getCapAccountId());
+	private void getCapacityDetailItems_Sync(Capacity capacity) throws ResourceNotFoundException, InterruptedException, ExecutionException {
+		LOGGER.debug("CustomerCapacityService.getCapacityDetailItems_Sync: {}", capacity.getCapAccountId());
 		
 		final long startTime = System.currentTimeMillis();
 		int capAccountId = capacity.getCapAccountId();
@@ -185,21 +213,23 @@ public class CustomerCapacityService {
 		// Get capacity detail ...
 		CompletableFuture<List<CapacityDetail>> capacityDetail = null;
 		try {
-			capacityDetail = this.getCapacityDetailByCapAccountId(capAccountId);
+			capacityDetail = this.getCapacityDetailByCapAccountId(capacity);
 			capacity.setCapDetail(capacityDetail.get());
 		}
 		catch (ResourceNotFoundException | InterruptedException | ExecutionException e) {
-			LOGGER.debug("No capacity detail found for capacity account:{}", capAccountId);
+			LOGGER.debug(CUSTOMER_CAP_ERROR_MESSAGE, capAccountId);
+			throw e;
 		}
 		
 		// Get penalty points ...
-		CompletableFuture<List<PenaltyPoints>> points = null;
+		CompletableFuture<PenaltyPoints> points = null;
 		try {
-			points = this.getCustomerCapacityPenaltyPointsByCapAccountId(capAccountId);
+			points = this.getRolledUpPenaltyPointsWithLatestExpiryDate(capAccountId);
 			capacity.setPenaltyPoints(points.get());
 		}
 		catch (ResourceNotFoundException | InterruptedException | ExecutionException e) {
-			LOGGER.debug("No penality points found for capacity account:{}", capAccountId);
+			LOGGER.debug(PEN_POINTS_ERROR_MESSAGE, capAccountId);
+			throw e;
 		}
 		
 		// Get vessel summary ...
@@ -209,27 +239,11 @@ public class CustomerCapacityService {
 			capacity.setVesselSummary(vesselSummary.get());
 		}
 		catch (ResourceNotFoundException | InterruptedException | ExecutionException e) {
-			LOGGER.debug("Vessel summary information not found for capacity account:{}", capAccountId);
+			LOGGER.debug(VESSEL_SUM_ERROR_MESSAGE, capAccountId);
+			throw e;
 		}
 		
 		LOGGER.info("CustomerCapacityService.getCapacityDetailItems_Sync({}) EElapsed time(ms):{}", capAccountId, (System.currentTimeMillis() - startTime));
-    }
-	
-	/***
-	 * private void getCapacityDetailItems_Original(Capacity capacity)
-	 * @param capacity
-	 * Original function calling later objects ..
-	 */
-	private void getCapacityDetailItems_Original(Capacity capacity) {
-		// Get capacity detail ...
-		LOGGER.debug("CustomerCapacityService.getCapacityDetailItems:" + capacity.getCapAccountId());
-//		capacity.setCapDetail(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(capacity.getCapAccountId()));
-		
-		// Get penalty points ...
-//		capacity.setPenaltyPoints(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(capacity.getCapAccountId()));
-		
-		// Get vessel ...
-//		capacity.setVesselSummary(vesselSummaryRepository.findVesselSummaryByVesselId(capacity.getVesselId()));
     }
 
 	/***
@@ -238,15 +252,32 @@ public class CustomerCapacityService {
 	 * @return CompletableFuture<List<CapacityDetail>>
 	 * @throws ResourceNotFoundException
 	 */
-	public CompletableFuture<List<CapacityDetail>> getCapacityDetailByCapAccountId(int capAccountId) throws ResourceNotFoundException {
+	public CompletableFuture<List<CapacityDetail>> getCapacityDetailByCapAccountId(Capacity capacity) throws ResourceNotFoundException, InterruptedException, ExecutionException {
+		int capAccountId = capacity.getCapAccountId();
 		LOGGER.debug("CustomerCapacityService.getCapacityDetailByCapAccountId({})", capAccountId);
 		
 		final long startTime = System.currentTimeMillis();
 		
 		CompletableFuture<List<CapacityDetail>> capDetail = customerCapacityDetailRepository.findCapacityDetailByCapAccountId(capAccountId);
+		
 		if (capDetail==null || capDetail.isCompletedExceptionally()) {
-			LOGGER.info("No capacity detail found for capacity account{}", capAccountId);
+			LOGGER.info(CUSTOMER_CAP_ERROR_MESSAGE, capAccountId);
 			throw new ResourceNotFoundException("No capacity detail found for capacity account: " + capAccountId);
+		}
+		else {
+			// For OnRegister, include penalty points info for each CapacityDetail block item if applicable ...
+			if (capacity.isOnRegister()) {
+				try {
+					List<CapacityDetail> capDetail_out = capDetail.get().stream().map(detail -> detail.setPenaltyPointsReturnDetail (
+						this.getRolledUpPenaltyPointsWithLatestExpiryDate_Sync(capAccountId)
+					)).collect(Collectors.toList());
+					
+					capDetail.complete(capDetail_out);
+				} catch (InterruptedException | ExecutionException e) {
+					LOGGER.error("Exception reading capacity detail points information for capacity account: " + capAccountId, e);
+					throw e;
+				}
+			}
 		}
 		
 		LOGGER.info("CustomerCapacityService.getCapacityDetailByCapAccountId({}) EElapsed time(ms):{}", capAccountId, (System.currentTimeMillis() - startTime));
@@ -254,23 +285,43 @@ public class CustomerCapacityService {
 	}
 	
 	/**
-	 * public CompletableFuture<List<PenaltyPoints>> getCustomerCapacityPenaltyPointsByCapAccountId(int capAccountId) throws ResourceNotFoundException;
+	 * public CompletableFuture<List<PenaltyPoints>> getRolledUpPenalityPointsWithLatestExpiryDate(int capAccountId) throws ResourceNotFoundException;
 	 * @param capAccountId
 	 * @return CompletableFuture<List<PenaltyPoints>>
 	 * @throws ResourceNotFoundException
 	 */
-	public CompletableFuture<List<PenaltyPoints>> getCustomerCapacityPenaltyPointsByCapAccountId(int capAccountId) throws ResourceNotFoundException {
+	public CompletableFuture<PenaltyPoints> getRolledUpPenaltyPointsWithLatestExpiryDate(int capAccountId) throws ResourceNotFoundException {
 		LOGGER.debug("CustomerCapacityService.getCustomerCapacityPenaltyPointsByCapAccountId({})", capAccountId);
 		
 		final long startTime = System.currentTimeMillis();
 		
-		CompletableFuture<List<PenaltyPoints>> points = capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(capAccountId);
+		CompletableFuture<PenaltyPoints> points = capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(capAccountId);
 		if (points==null || points.isCompletedExceptionally()) {
-			LOGGER.info("No penality points found for capacity account{}", capAccountId);
+			LOGGER.info(PEN_POINTS_ERROR_MESSAGE, capAccountId);
 			throw new ResourceNotFoundException("No penality points found for capacity account: " + capAccountId);
 		}
 		
 		LOGGER.info("CustomerCapacityService.getCustomerCapacityPenaltyPointsByCapAccountId({}) EElapsed time(ms):{}", capAccountId, (System.currentTimeMillis() - startTime));
+		return points;
+	}
+	
+	/**
+	 * public CompletableFuture<List<PenaltyPoints>> getRolledUpPenalityPointsWithLatestExpiryDate(int capAccountId) throws ResourceNotFoundException;
+	 * @param capAccountId
+	 * @return CompletableFuture<List<PenaltyPoints>>
+	 * @throws ResourceNotFoundException
+	 */
+	public PenaltyPoints getRolledUpPenaltyPointsWithLatestExpiryDate_Sync(int capAccountId) {
+		LOGGER.debug("CustomerCapacityService.getRolledUpPenaltyPointsWithLatestExpiryDate_Sync({})", capAccountId);
+		
+		final long startTime = System.currentTimeMillis();
+		
+		PenaltyPoints points = capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId_Sync(capAccountId);
+		if (points==null) {
+			LOGGER.info(PEN_POINTS_ERROR_MESSAGE, capAccountId);
+		}
+		
+		LOGGER.info("CustomerCapacityService.getRolledUpPenaltyPointsWithLatestExpiryDate_Sync({}) EElapsed time(ms):{}", capAccountId, (System.currentTimeMillis() - startTime));
 		return points;
 	}
 	
@@ -287,7 +338,7 @@ public class CustomerCapacityService {
 		
 		CompletableFuture<VesselSummary> vesselSummary = vesselSummaryRepository.findVesselSummaryByVesselId(capAccountId);
 		if (vesselSummary==null || vesselSummary.isCompletedExceptionally()) {
-			LOGGER.info("Vessel summary information not found for capacity account{}", capAccountId);
+			LOGGER.info(VESSEL_SUM_ERROR_MESSAGE, capAccountId);
 			throw new ResourceNotFoundException("Vessel summary information not found for capacity account: " + capAccountId);
 		}
 		
@@ -310,7 +361,7 @@ public class CustomerCapacityService {
 	 * @return List<CustomerCapacityDTO>
 	 */
 	public List<CustomerCapacityDTO> getCustomerCapacityInformation (String customerId) {
-		LOGGER.debug("CustomerCapacityService.getCustomerCapacityInformation(" + customerId + ")");
+		LOGGER.debug("CustomerCapacityService.getCustomerCapacityInformation:{}", customerId);
 		
 		List<CustomerCapacityDTO> listCustomerCapacityDTO = new ArrayList<CustomerCapacityDTO>();
 		
