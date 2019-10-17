@@ -1,6 +1,6 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.entity;
 
-import javax.persistence.Transient;
+import javax.persistence.Transient; 
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,12 +22,9 @@ public class Capacity {
 	
 	@Column(name = "capaccountid")
 	private Integer capAccountId;
-	
-//	@Column(name = "capsegmentid")
-//	private Integer capSegmentId;
 
 	@Column(name = "ownerid")
-	private String ownerId;
+	private Integer ownerId;
 	
 	@Column(name = "offregister")
 	private String offRegister;
@@ -60,9 +57,10 @@ public class Capacity {
 
 	@JsonInclude()
 	@Transient
-	private PenaltyPoints penaltyPoints; // Used for Off-Register Capacity only (see CapacityDetail entity for Off-Register) ...
+	private List<PenaltyPoints> penaltyPoints; // Used for Off-Register Capacity only (see CapacityDetail entity for Off-Register) ...
 	
+	/* OnRegister Indicator */
 	public boolean isOnRegister () {
-		return this.getOffRegister().equalsIgnoreCase("false");
+		return this.offRegister.equalsIgnoreCase("false");
 	}
 }
