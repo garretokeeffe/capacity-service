@@ -16,7 +16,7 @@ public class TrackRecord {
 	private Long ID;
 	
 	@Column(name = "trackRecordType")
-	private String trackRecordType;
+	private Integer trackRecordType;
 	
 	@Column(name = "quotaEligibility")
 	private boolean quotaEligibility;

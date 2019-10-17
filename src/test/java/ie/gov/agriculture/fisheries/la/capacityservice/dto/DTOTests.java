@@ -1,6 +1,6 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.dto;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull; 
 import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,28 +38,30 @@ public class DTOTests {
 			/* Capacity Item */
 			CapacityDTO capacityItemDto = new CapacityDTO();
 			PenaltyPointsDTO pointsDto = new PenaltyPointsDTO();
+			List<PenaltyPointsDTO> pointsDtoList = new ArrayList<>();
+			pointsDtoList.add(pointsDto);
 			
-			capacityItemDto.setCapAccountId("1001");
+			capacityItemDto.setCapAccountId(1001);
 			capacityItemDto.setFleetSegment(22);
 			capacityItemDto.setFleetSubSegment(2002);
 			capacityItemDto.setGt(100);
 			capacityItemDto.setKw(200);
 			capacityItemDto.setOffRegister(true);
-			capacityItemDto.setOwnerId("1200");
-			capacityItemDto.setVesselId("869");
+			capacityItemDto.setOwnerId(1200);
+			capacityItemDto.setVesselId(869);
 			capacityItemDto.setVesselSummary(new VesselSummaryDTO());
-			capacityItemDto.setPenaltyPoints(pointsDto);
-			capacityItemDto.setProposed("true");
+			capacityItemDto.setPenaltyPoints(pointsDtoList);
+			capacityItemDto.setProposed(true);
 			
-			assertTrue(testMthd + " capacityItemDto.getCapAccountId().equalsIgnoreCase(1001) assert true.", capacityItemDto.getCapAccountId().equalsIgnoreCase("1001"));
-			assertTrue(testMthd + " capacityItemDto.getOwnerId().equalsIgnoreCase(1200) assert true.", capacityItemDto.getOwnerId().equalsIgnoreCase("1200"));
+			assertTrue(testMthd + " capacityItemDto.getCapAccountId()==1001 assert true.", capacityItemDto.getCapAccountId()==1001);
+			assertTrue(testMthd + " capacityItemDto.getOwnerId()==1200 assert true.", capacityItemDto.getOwnerId()==1200);
 			assertTrue(testMthd + " capacityItemDto.getOffRegister().equalsIgnoreCase(true) assert true.", capacityItemDto.isOffRegister());
 			assertTrue(testMthd + " capacityItemDto.getFleetSegment().equalsIgnoreCase(22) assert true.", capacityItemDto.getFleetSegment()==22);
 			assertTrue(testMthd + " capacityItemDto.getFleetSubSegment().equalsIgnoreCase(2002) assert true.", capacityItemDto.getFleetSubSegment()==2002);
 			assertTrue(testMthd + " capacityItemDto.getGt().equalsIgnoreCase(100) assert true.", capacityItemDto.getGt()==100);
 			assertTrue(testMthd + " capacityItemDto.getKw().equalsIgnoreCase(200) assert true.", capacityItemDto.getKw()==200);
-			assertTrue(testMthd + " capacityItemDto.getVesselId().equalsIgnoreCase(869) assert true.", capacityItemDto.getVesselId().equalsIgnoreCase("869"));
-			assertTrue(testMthd + " capacityItemDto.getProposed().equalsIgnoreCase(true) assert true.", capacityItemDto.getProposed().equalsIgnoreCase("true"));
+			assertTrue(testMthd + " capacityItemDto.getVesselId()==869 assert true.", capacityItemDto.getVesselId()==869);
+			assertTrue(testMthd + " capacityItemDto.getProposed().equalsIgnoreCase(true) assert true.", capacityItemDto.isProposed()==true);
 			
 			assertNotNull(capacityItemDto.getVesselSummary());
 			assertNotNull(capacityItemDto.getPenaltyPoints());
@@ -70,11 +72,10 @@ public class DTOTests {
 			List<TrackRecordDTO> trackRecordItemsDto = new ArrayList<TrackRecordDTO>();
 			
 			capacityDetailDto.setId(100);
-			capacityDetailDto.setSourceVesselId("200");
+			capacityDetailDto.setSourceVesselId(200);
 			capacityDetailDto.setCapacityType("GT");
 			capacityDetailDto.setSourceVesselName("BRIDGET CARMEL");
 			capacityDetailDto.setCapacityAmount(300);
-			capacityDetailDto.setPointsAssigned("24");
 			capacityDetailDto.setExpiryDate("01/01/2020");
 			capacityDetailDto.setOffRegisterDate("01/01/2021");
 			capacityDetailDto.setTrackRecord(trackRecordItemsDto);
@@ -82,9 +83,8 @@ public class DTOTests {
 			assertTrue(testMthd + " capacityDetailDto.getId().equalsIgnoreCase(100) assert true.", capacityDetailDto.getId()==100);
 			assertTrue(testMthd + " capacityDetailDto.getCapacityAmount().equalsIgnoreCase(300) assert true.", capacityDetailDto.getCapacityAmount()==300);
 			assertTrue(testMthd + " capacityDetailDto.getCapacityType().equalsIgnoreCase(GT) assert true.", capacityDetailDto.getCapacityType().equalsIgnoreCase("GT"));
-			assertTrue(testMthd + " capacityDetailDto.getSourceVesselId().equalsIgnoreCase(200) assert true.", capacityDetailDto.getSourceVesselId().equalsIgnoreCase("200"));
+			assertTrue(testMthd + " capacityDetailDto.getSourceVesselId()==200 assert true.", capacityDetailDto.getSourceVesselId()==200);
 			assertTrue(testMthd + " capacityDetailDto.getSourceVesselName().equalsIgnoreCase(BRIDGET CARMEL) assert true.", capacityDetailDto.getSourceVesselName().equalsIgnoreCase("BRIDGET CARMEL"));
-			assertTrue(testMthd + " capacityDetailDto.getPointsAssigned().equalsIgnoreCase(24) assert true.", capacityDetailDto.getPointsAssigned().equalsIgnoreCase("24"));
 			assertTrue(testMthd + " capacityDetailDto.getExpiryDate().equalsIgnoreCase(01/01/2020) assert true.", capacityDetailDto.getExpiryDate().equalsIgnoreCase("01/01/2020"));
 			assertTrue(testMthd + " capacityDetailDto.getOffRegisterDate().equalsIgnoreCase(01/01/2021) assert true.", capacityDetailDto.getOffRegisterDate().equalsIgnoreCase("01/01/2021"));
 			
@@ -97,14 +97,14 @@ public class DTOTests {
 			pointDto.setID(Integer.valueOf(297458165).longValue());
 			pointDto.setCAPACCOUNTID("297458102");
 			pointDto.setCAPSEGMENTID("297458103");
-			pointDto.setASSIGNEDPOINTS("12");
+			pointDto.setASSIGNEDPOINTS(12);
 			pointDto.setEXPIRYDATE("09/10/2018");
 			pointDto.setPENALTYCOMMENT("Test!");
 			
 			assertTrue(testMthd + " pointDto.getID()==297458165 assert true.", pointDto.getID()==297458165);
 			assertTrue(testMthd + " pointDto.getCAPACCOUNTID().equalsIgnoreCase(297458102) assert true.", pointDto.getCAPACCOUNTID().equalsIgnoreCase("297458102"));
 			assertTrue(testMthd + " pointDto.getCAPSEGMENTID().equalsIgnoreCase(297458103) assert true.", pointDto.getCAPSEGMENTID().equalsIgnoreCase("297458103"));
-			assertTrue(testMthd + " pointDto.getASSIGNEDPOINTS().equalsIgnoreCase(12) assert true.", pointDto.getASSIGNEDPOINTS().equalsIgnoreCase("12"));
+			assertTrue(testMthd + " pointDto.getASSIGNEDPOINTS()==12 assert true.", pointDto.getASSIGNEDPOINTS()==12);
 			assertTrue(testMthd + " pointDto.getEXPIRYDATE().equalsIgnoreCase(09/10/2018) assert true.", pointDto.getEXPIRYDATE().equalsIgnoreCase("09/10/2018"));
 			assertTrue(testMthd + " pointDto.setPENALTYCOMMENT().equalsIgnoreCase(09/10/2018) assert true.", pointDto.getPENALTYCOMMENT().equalsIgnoreCase("Test!"));
 			
@@ -116,16 +116,16 @@ public class DTOTests {
 			vesselSummaryDto.setId(1001);
 			vesselSummaryDto.setCfr("321321321");
 			vesselSummaryDto.setPrn("54651650");
-			vesselSummaryDto.setKw("300");
-			vesselSummaryDto.setGt("400");
+			vesselSummaryDto.setKw(300);
+			vesselSummaryDto.setGt(400);
 			vesselSummaryDto.setName("BRIDGET CARMEL");
 			vesselSummaryDto.setStatus(20022);
 			
 			assertTrue(testMthd + " point.getId()==1001 assert true.", vesselSummaryDto.getId()==1001);
 			assertTrue(testMthd + " vesselSummaryDto.getCfr().equalsIgnoreCase(321321321) assert true.", vesselSummaryDto.getCfr().equalsIgnoreCase("321321321"));
 			assertTrue(testMthd + " vesselSummaryDto.getPrn().equalsIgnoreCase(54651650) assert true.", vesselSummaryDto.getPrn().equalsIgnoreCase("54651650"));
-			assertTrue(testMthd + " vesselSummaryDto.getKw().equalsIgnoreCase(300) assert true.", vesselSummaryDto.getKw().equalsIgnoreCase("300"));
-			assertTrue(testMthd + " vesselSummaryDto.getGt().equalsIgnoreCase(500) assert true.", vesselSummaryDto.getGt().equalsIgnoreCase("400"));
+			assertTrue(testMthd + " vesselSummaryDto.getKw().equalsIgnoreCase(300) assert true.", vesselSummaryDto.getKw()==300);
+			assertTrue(testMthd + " vesselSummaryDto.getGt().equalsIgnoreCase(500) assert true.", vesselSummaryDto.getGt()==400);
 			assertTrue(testMthd + " vesselSummaryDto.getName().equalsIgnoreCase(BRIDGET CARMEL) assert true.", vesselSummaryDto.getName().equalsIgnoreCase("BRIDGET CARMEL"));
 			assertTrue(testMthd + " vesselSummaryDto.getStatus().equalsIgnoreCase(BRIDGET CARMEL) assert true.", vesselSummaryDto.getStatus()==20022);
 			
@@ -134,12 +134,12 @@ public class DTOTests {
 			/* Track Record */
 			TrackRecordDTO trackRecordDto = new TrackRecordDTO();
 			
-			trackRecordDto.setID(Integer.valueOf(1001).longValue());
+			//trackRecordDto.setID(Integer.valueOf(1001).longValue());
 			trackRecordDto.setQuotaEligibility(true);
-			trackRecordDto.setTrackRecordType("NW Herring");
+			trackRecordDto.setTrackRecordType(3);
 			
-			assertTrue(testMthd + " trackRecordDto.getID()==1001 assert true.", trackRecordDto.getID()==1001);
-			assertTrue(testMthd + " trackRecordDto.getTrackRecordType().equalsIgnoreCase(NW Herring) assert true.", trackRecordDto.getTrackRecordType().equalsIgnoreCase("NW Herring"));
+			//assertTrue(testMthd + " trackRecordDto.getID()==1001 assert true.", trackRecordDto.getID()==1001);
+			assertTrue(testMthd + " trackRecordDto.getTrackRecordType()==3 assert true.", trackRecordDto.getTrackRecordType()==3);
 			assertTrue(testMthd + " trackRecordDto.isQuotaEligibility() assert true.", trackRecordDto.isQuotaEligibility());
 			
 			assertNotNull(trackRecordDto.toString());
