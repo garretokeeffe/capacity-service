@@ -1,6 +1,6 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.repository;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull; 
 import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -75,7 +75,7 @@ public class CapacityRepositoryTest {
 			
 			assertTrue(testMthd + " capacityItem.getId().equalsIgnoreCase(1) assert true.", capacityItem.getId().equalsIgnoreCase("1"));
 			assertTrue(testMthd + " capacityItem.getCapAccountId()==297458102 assert true.", capacityItem.getCapAccountId()==297458102);
-			assertTrue(testMthd + " capacityItem.getOwnerId().equalsIgnoreCase(4052) assert true.", capacityItem.getOwnerId().equalsIgnoreCase("4052"));
+			assertTrue(testMthd + " capacityItem.getOwnerId()==4052 assert true.", capacityItem.getOwnerId()==4052);
 			assertTrue(testMthd + " capacityItem.getOffRegister().equalsIgnoreCase(false) assert true.", capacityItem.getOffRegister().equalsIgnoreCase("false"));
 			assertTrue(testMthd + " capacityItem.getFleetSegment()==5 assert true.", capacityItem.getFleetSegment()==5);
 			assertTrue(testMthd + " capacityItem.getFleetSubSegment()==1942696 assert true.", capacityItem.getFleetSubSegment()==1942696);
@@ -116,6 +116,8 @@ public class CapacityRepositoryTest {
 			
 			/* Test capacity detail item */
 			CapacityDetail capacityDetail = (CapacityDetail) capacityDetailItems.get().get(0);
+			
+			assertNotNull(capacityDetail);
 			
 			// Cover gaps ...
 			capacityDetail.setSourceVesselId("100");
@@ -195,14 +197,14 @@ public class CapacityRepositoryTest {
 
 		try {
 			/* Test ASync Method */
-			CompletableFuture<PenaltyPoints> points_async = capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(capAccountId);
+			CompletableFuture<List<PenaltyPoints>> points_async = capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(capAccountId);
 			
 			assertTrue(testMthd + " points!=null assert true.", points_async!=null);
 			
 			assertTrue(testMthd + " points!=null assert true.", points_async.get()!=null);
 			
 			/* Test points detail */
-			PenaltyPoints point1 = (PenaltyPoints) points_async.get();
+			PenaltyPoints point1 = (PenaltyPoints) points_async.get().get(0);
 			
 			// Cover gaps ...
 			point1.setCAPACCOUNTID("100");

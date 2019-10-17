@@ -1,5 +1,6 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.entity;
 
+import java.util.ArrayList; 
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,14 +46,19 @@ public class CapacityDetail {
 	
 	@JsonInclude()
 	@Transient
-	private PenaltyPoints penaltyPoints; // Used for On-Register Capacity only (see Capacity entity for Off-Register) ...
+	private List<PenaltyPoints> penaltyPoints; // Used for On-Register Capacity only (see Capacity entity for Off-Register) ...
 	
 	@JsonInclude()
 	@Transient
 	private List<TrackRecord> trackRecord;
 	
 	public CapacityDetail setPenaltyPointsReturnDetail(PenaltyPoints penaltyPoints) {
-		this.penaltyPoints = penaltyPoints;
+		if (penaltyPoints!=null) {
+			List<PenaltyPoints> points = new ArrayList<>(0);
+			points.add(penaltyPoints);
+			
+			this.penaltyPoints = points;
+		}
 		
 		return this;
 	}

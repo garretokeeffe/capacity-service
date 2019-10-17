@@ -1,6 +1,6 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.entity;
 
-import javax.persistence.Column;
+import javax.persistence.Column; 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import lombok.Getter;
@@ -8,13 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
-/**
- * Class represent the complete Vessel details
- * @see https://confluence.agriculture.gov.ie/confluence/display/FISHERIES/Get+Vessels
- * @author garret.okeeffe
- *
- */
 @Entity
 @Getter @Setter @NoArgsConstructor @ToString
 public class CustomerCapacity {
