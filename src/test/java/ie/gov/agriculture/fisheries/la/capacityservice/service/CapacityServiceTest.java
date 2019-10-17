@@ -1,6 +1,7 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.service;
 
 import static org.junit.Assert.assertTrue;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -10,6 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ie.gov.agriculture.fisheries.la.capacityservice.CapaityServiceApplication;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.AllCapacityDTO;
+import ie.gov.agriculture.fisheries.la.capacityservice.dto.CapacityDTO;
+import ie.gov.agriculture.fisheries.la.capacityservice.dto.CapacityDetailDTO;
+import ie.gov.agriculture.fisheries.la.capacityservice.dto.PenaltyPointsDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.exception.ResourceNotFoundException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,7 +42,7 @@ public class CapacityServiceTest {
 			
 			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
 			
-			assertTrue(testMthd + " '2957'.equalsIgnoreCase(allCapacityDTO.getOwnerId()) assert true.", "2957".equalsIgnoreCase(allCapacityDTO.getOwnerId()));
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
 			
 			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
 			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
@@ -68,7 +72,7 @@ public class CapacityServiceTest {
 			
 			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
 			
-			assertTrue(testMthd + " '2957'.equalsIgnoreCase(allCapacityDTO.getOwnerId()) assert true.", "2957".equalsIgnoreCase(allCapacityDTO.getOwnerId()));
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
 			
 			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
 			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
@@ -98,7 +102,7 @@ public class CapacityServiceTest {
 			
 			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
 			
-			assertTrue(testMthd + " '2957'.equalsIgnoreCase(allCapacityDTO.getOwnerId()) assert true.", "2957".equalsIgnoreCase(allCapacityDTO.getOwnerId()));
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
 			
 			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
 			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
@@ -128,7 +132,7 @@ public class CapacityServiceTest {
 			
 			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
 			
-			assertTrue(testMthd + " '2957'.equalsIgnoreCase(allCapacityDTO.getOwnerId()) assert true.", "2957".equalsIgnoreCase(allCapacityDTO.getOwnerId()));
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
 			
 			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
 			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
@@ -183,6 +187,103 @@ public class CapacityServiceTest {
 				e1.printStackTrace();
 			}
 		}
+	}
+	
+	@Test
+	public void testPenalityPointsForOnRegister() {
+		testMthd = testClass + ".testPenalityPointsForOnRegister().";
+		boolean success = true;
+		final String customerId = "4052";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, true);
+			
+			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
+			
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 4052==allCapacityDTO.getOwnerId());
+			
+			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
+			
+			List<CapacityDTO> onRegister = allCapacityDTO.getOnRegister();
+			
+			int assignedPoints = 0;
+			String expiryDate = "";
+			
+			int j = onRegister.size();
+			for (int i=0; i<j; i++) {
+				CapacityDTO capacityDTO = onRegister.get(i);
+				
+				if (capacityDTO.getCapAccountId()==297458102) {
+					PenaltyPointsDTO points = (PenaltyPointsDTO) capacityDTO.getPenaltyPoints().get(0);
+					assignedPoints = points.getASSIGNEDPOINTS();
+					expiryDate = points.getEXPIRYDATE();
+				}
+			}
+			
+			assertTrue(testMthd + " assignedPoints==24 assert true.", assignedPoints==24);
+			assertTrue(testMthd + " expiryDate.equalsIgnoreCase(09/10/2018) assert true.", expiryDate.equalsIgnoreCase("09/10/2018"));
+			
+			success = true;
+		} catch (Exception e) {
+			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
+			e.printStackTrace();
+			success = false;
+		}
+
+		assertTrue("T E S T - " + testMthd + " assert true.", success);
+		
+		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
+	}
+	
+	@Test
+	public void testPenalityPointsForOffRegister() {
+		testMthd = testClass + ".testPenalityPointsForOffRegister().";
+		boolean success = true;
+		final String customerId = "749";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, true);
+			
+			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
+			
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 749==allCapacityDTO.getOwnerId());
+			
+			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
+			
+			List<CapacityDTO> offRegister = allCapacityDTO.getOffRegister();
+			
+			int assignedPoints = 0;
+			String expiryDate = "";
+			
+			int j = offRegister.size();
+			for (int i=0; i<j; i++) {
+				CapacityDTO capacityDTO = offRegister.get(i);
+				
+				if (capacityDTO.getCapAccountId()==304964428) {
+					CapacityDetailDTO capacityDetailDTO = capacityDTO.getCapDetail().get(0);
+					PenaltyPointsDTO points = (PenaltyPointsDTO) capacityDetailDTO.getPenaltyPoints().get(0);
+					assignedPoints = points.getASSIGNEDPOINTS();
+					expiryDate = points.getEXPIRYDATE();
+				}
+			}
+			
+			assertTrue(testMthd + " assignedPoints==9 assert true.", assignedPoints==9);
+			assertTrue(testMthd + " expiryDate.equalsIgnoreCase(01/01/2020) assert true.", expiryDate.equalsIgnoreCase("01/01/2020"));
+			
+			success = true;
+		} catch (Exception e) {
+			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
+			e.printStackTrace();
+			success = false;
+		}
+
+		assertTrue("T E S T - " + testMthd + " assert true.", success);
+		
+		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
 	}
 	
 	@Test
