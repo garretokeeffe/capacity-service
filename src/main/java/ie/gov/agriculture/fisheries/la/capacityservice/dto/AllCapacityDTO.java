@@ -8,7 +8,7 @@ import lombok.ToString;
 
 @Getter @Setter @NoArgsConstructor @ToString
 public class AllCapacityDTO {
-	private String ownerId;
+	private Integer ownerId;
 	
 	private List<CapacityDTO> onRegister;
 	private List<CapacityDTO> offRegister;
