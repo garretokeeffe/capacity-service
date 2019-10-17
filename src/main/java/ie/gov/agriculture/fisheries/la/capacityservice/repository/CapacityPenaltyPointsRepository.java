@@ -1,5 +1,6 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.repository;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -28,7 +29,7 @@ public interface CapacityPenaltyPointsRepository extends CrudRepository<PenaltyP
 			"group by b.CAPSEGMENTID", nativeQuery = true
 	)
 	@Async
-	public CompletableFuture<PenaltyPoints> findCustomerCapacityPenaltyPointsByCapAccountId(@Param("capAccountId") Integer capAccountId);
+	public CompletableFuture<List<PenaltyPoints>> findCustomerCapacityPenaltyPointsByCapAccountId(@Param("capAccountId") Integer capAccountId);
 	
 	/***
 	 *public PenaltyPoints findCustomerCapacityPenaltyPointsByCapAccountId_Sync(@Param("capAccountId") Integer capAccountId);
