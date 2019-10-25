@@ -188,7 +188,7 @@ stages {
 						openshift.newApp(OPENSHIFT_PROJECT_NAME+":latest", "--name="+OPENSHIFT_PROJECT_NAME).narrow('svc').expose()
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'IFIS_DB_CRED',
 							usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-							openshift.raw( 'set env dc/$OPENSHIFT_PROJECT_NAME', 'database.user=$USERNAME -e database.password=$PASSWORD -e spring.profiles.active=dev' )
+							openshift.raw( 'set env dc/$OPENSHIFT_PROJECT_NAME', 'database.user=$USERNAME -e database.password=$PASSWORD ' )
 						}
 						
 					}
