@@ -12,7 +12,7 @@ pipeline {
 	 OPENSHIFT_PROJECT_NAME="capacity-service"
 	 sonar_project_name="capacity-service"
 	 JAR="capacity-service-0.0.1-SNAPSHOT.jar"
-	  recipientList='joydip.kumar@agriculture.gov.ie,paul.forde@agriculture.gov.ie'
+	  recipientList='joydip.kumar@agriculture.gov.ie,paul.forde@agriculture.gov.ie,Garret.OKeeffe@agriculture.gov.ie,Stephen.McCosker@agriculture.gov.ie'
 	  PORT='8088'
   }
 
@@ -69,7 +69,7 @@ stages {
 						usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
 						configFileProvider([configFile(fileId: 'fisheries-settings', variable: 'MAVEN_SETTINGS')]) {
 								echo "Config: $MAVEN_SETTINGS"
-								sh   'mvn -s $MAVEN_SETTINGS clean package -Dmaven.test.skip=true -Ddatabase.user=$USERNAME -Ddatabase.password=$PASSWORD -Dspring.profiles.active=dev'
+								sh   'mvn -s $MAVEN_SETTINGS clean package -Ddatabase.user=$USERNAME -Ddatabase.password=$PASSWORD '
 						}
 					}
 			}
