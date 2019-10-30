@@ -1,6 +1,7 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.service;
 
 import static org.junit.Assert.assertTrue;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -10,6 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ie.gov.agriculture.fisheries.la.capacityservice.CapaityServiceApplication;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.AllCapacityDTO;
+import ie.gov.agriculture.fisheries.la.capacityservice.dto.CapacityDTO;
+import ie.gov.agriculture.fisheries.la.capacityservice.dto.CapacityDetailDTO;
+import ie.gov.agriculture.fisheries.la.capacityservice.dto.PenaltyPointsDTO;
+import ie.gov.agriculture.fisheries.la.capacityservice.exception.ResourceNotFoundException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CapaityServiceApplication.class)
@@ -25,29 +30,22 @@ public class CapacityServiceTest {
 	CustomerCapacityService customerCapacityService;
 	
 	@Test
-	public void getAllCapacityByCcsID() {
-		testMthd = testClass + ".getAllCapacityByCcsID().";
+	public void getAllCapacityByCcsID_Async() {
+		testMthd = testClass + ".getAllCapacityByCcsID_Async().";
 		boolean success = true;
 		final String customerId = "FBY10086C";
 		
 		this.doLog("T E S T - " + testMthd);
 
 		try {
-			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true);
+			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true, true);
 			
 			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
 			
-			assertTrue(testMthd + " '2957'.equalsIgnoreCase(allCapacityDTO.getOwnerId()) assert true.", "2957".equalsIgnoreCase(allCapacityDTO.getOwnerId()));
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
 			
 			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
 			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
-			
-			/* Capacity records for customer may change over time and impact reliability of below tests */
-			//assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()>0 assert true.", allCapacityDTO.getOnRegister().size()>0);
-			//assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()>0 assert true.", allCapacityDTO.getOffRegister().size()>0);
-			
-			//assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()==1 assert true.", allCapacityDTO.getOnRegister().size()==3);
-			//assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()==4 assert true.", allCapacityDTO.getOffRegister().size()==4);
 			
 			success = true;
 		} catch (Exception e) {
@@ -62,29 +60,219 @@ public class CapacityServiceTest {
 	}
 	
 	@Test
-	public void getAllCapacityByIfisID() {
-		testMthd = testClass + ".getAllCapacityByIfisID().";
+	public void getAllCapacityByCcsID_Sync() {
+		testMthd = testClass + ".getAllCapacityByCcsID_Sync().";
+		boolean success = true;
+		final String customerId = "FBY10086C";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true, false);
+			
+			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
+			
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
+			
+			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
+			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
+			
+			success = true;
+		} catch (Exception e) {
+			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
+			e.printStackTrace();
+			success = false;
+		}
+
+		assertTrue("T E S T - " + testMthd + " assert true.", success);
+		
+		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
+	}
+	
+	@Test
+	public void getAllCapacityByIfisID_Async() {
+		testMthd = testClass + ".getAllCapacityByIfisID_Async().";
 		boolean success = true;
 		final String customerId = "2957";
 		
 		this.doLog("T E S T - " + testMthd);
 
 		try {
-			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false);
+			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, true);
 			
 			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
 			
-			assertTrue(testMthd + " '2957'.equalsIgnoreCase(allCapacityDTO.getOwnerId()) assert true.", "2957".equalsIgnoreCase(allCapacityDTO.getOwnerId()));
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
 			
 			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
 			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
 			
-			/* Capacity records for customer may change over time and impact reliability of below tests */
-			//assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()>0 assert true.", allCapacityDTO.getOnRegister().size()>0);
-			//assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()>0 assert true.", allCapacityDTO.getOffRegister().size()>0);
+			success = true;
+		} catch (Exception e) {
+			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
+			e.printStackTrace();
+			success = false;
+		}
+
+		assertTrue("T E S T - " + testMthd + " assert true.", success);
+		
+		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
+	}
+	
+	@Test
+	public void getAllCapacityByIfisID_Sync() {
+		testMthd = testClass + ".getAllCapacityByIfisID_Sync().";
+		boolean success = true;
+		final String customerId = "2957";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, false);
 			
-			//assertTrue(testMthd + " allCapacityDTO.getOnRegister().size()==1 assert true.", allCapacityDTO.getOnRegister().size()==3);
-			//assertTrue(testMthd + " allCapacityDTO.getOffRegister().size()==4 assert true.", allCapacityDTO.getOffRegister().size()==4);
+			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
+			
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
+			
+			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
+			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
+			
+			success = true;
+		} catch (Exception e) {
+			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
+			e.printStackTrace();
+			success = false;
+		}
+
+		assertTrue("T E S T - " + testMthd + " assert true.", success);
+		
+		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
+	}
+	
+	@Test(expected = ResourceNotFoundException.class)
+	public void getAllCapacityByIfisID_Async_ValidCustomerWithNoCapacity() throws ResourceNotFoundException {
+		testMthd = testClass + ".getAllCapacityByIfisID_Async_ValidCustomerWithNoCapacity().";
+		final String customerId = "140824327";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			customerCapacityService.getAllCapacity(customerId, false, true);
+		} catch (ResourceNotFoundException e) {
+			throw e;
+		} catch (Exception e) {
+			try {
+				throw e;
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	@Test(expected = ResourceNotFoundException.class)
+	public void getAllCapacityByCcsID_Async_NegativeTest_ExceptionSatisified() throws ResourceNotFoundException {
+		testMthd = testClass + ".getAllCapacityByCcsID_Async_NegativeTest_ExceptionSatisified().";
+		final String customerId = "INVALID";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			customerCapacityService.getAllCapacity(customerId, true, true);
+		} catch (ResourceNotFoundException e) {
+			throw e;
+		} catch (Exception e) {
+			try {
+				throw e;
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	@Test
+	public void testPenalityPointsForOnRegister() {
+		testMthd = testClass + ".testPenalityPointsForOnRegister().";
+		boolean success = true;
+		final String customerId = "4052";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, true);
+			
+			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
+			
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 4052==allCapacityDTO.getOwnerId());
+			
+			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
+			
+			List<CapacityDTO> onRegister = allCapacityDTO.getOnRegister();
+			
+			int assignedPoints = 0;
+			String expiryDate = "";
+			
+			int j = onRegister.size();
+			for (int i=0; i<j; i++) {
+				CapacityDTO capacityDTO = onRegister.get(i);
+				
+				if (capacityDTO.getCapAccountId()==297458102) {
+					PenaltyPointsDTO points = (PenaltyPointsDTO) capacityDTO.getPenaltyPoints().get(0);
+					assignedPoints = points.getASSIGNEDPOINTS();
+					expiryDate = points.getEXPIRYDATE();
+				}
+			}
+			
+			assertTrue(testMthd + " assignedPoints==24 assert true.", assignedPoints==24);
+			assertTrue(testMthd + " expiryDate.equalsIgnoreCase(09/10/2018) assert true.", expiryDate.equalsIgnoreCase("09/10/2018"));
+			
+			success = true;
+		} catch (Exception e) {
+			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
+			e.printStackTrace();
+			success = false;
+		}
+
+		assertTrue("T E S T - " + testMthd + " assert true.", success);
+		
+		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
+	}
+	
+	@Test
+	public void testPenalityPointsForOffRegister() {
+		testMthd = testClass + ".testPenalityPointsForOffRegister().";
+		boolean success = true;
+		final String customerId = "749";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, true);
+			
+			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
+			
+			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 749==allCapacityDTO.getOwnerId());
+			
+			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
+			
+			List<CapacityDTO> offRegister = allCapacityDTO.getOffRegister();
+			
+			int assignedPoints = 0;
+			String expiryDate = "";
+			
+			int j = offRegister.size();
+			for (int i=0; i<j; i++) {
+				CapacityDTO capacityDTO = offRegister.get(i);
+				
+				if (capacityDTO.getCapAccountId()==304964428) {
+					CapacityDetailDTO capacityDetailDTO = capacityDTO.getCapDetail().get(0);
+					PenaltyPointsDTO points = (PenaltyPointsDTO) capacityDetailDTO.getPenaltyPoints().get(0);
+					assignedPoints = points.getASSIGNEDPOINTS();
+					expiryDate = points.getEXPIRYDATE();
+				}
+			}
+			
+			assertTrue(testMthd + " assignedPoints==9 assert true.", assignedPoints==9);
+			assertTrue(testMthd + " expiryDate.equalsIgnoreCase(01/01/2020) assert true.", expiryDate.equalsIgnoreCase("01/01/2020"));
 			
 			success = true;
 		} catch (Exception e) {
@@ -123,6 +311,22 @@ public class CapacityServiceTest {
 		assertTrue("T E S T - " + testMthd + " assert true.", success);
 		
 		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
+	}
+	
+	@Test(expected = ResourceNotFoundException.class)
+	public void getIfisIdByCcsId_NegativeTest_ExceptionSatisified() throws ResourceNotFoundException {
+		testMthd = testClass + ".getIfisIdByCcsId_NegativeTest_ExceptionSatisified().";
+		final String customerId = "INVALID";
+		
+		this.doLog("T E S T - " + testMthd);
+
+		try {
+			customerCapacityService.getIfisIdByCcsId(customerId);
+		} catch (ResourceNotFoundException e) {
+			throw e;
+		} catch (Exception e) {
+			throw e;
+		}
 	}
 	
 	private void doLog (final String in) {

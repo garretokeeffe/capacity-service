@@ -1,6 +1,6 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.repository;
 
-import java.util.List;
+import java.util.List; 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -21,7 +21,7 @@ public interface CapacityRepository extends CrudRepository<Capacity, String> {
 			"    SUM(DECODE(cas.uomid, '91359', cas.proposedbalance, 0)) GT_Proposed, " +  
 			"    SUM(DECODE(cas.uomid, '91290', cas.proposedbalance, 0)) KW_Proposed, " + 
 			"    ca.VESSELID, " + 
-			"    max(case when (ca.statusid = 6237297 and v.STATUSID = 1811007) then 'false' else 'true' end) offRegister, " + 
+			"    max(case when cas.OFFREGDATE is not null then 'true' else 'false' end) offRegister, " + 
 			"    max(case  " +  
 			"        when (cas.segmentid in (1942697, 338360921, 1942700, 338360917)) then '1' " +  
 			"        when (cas.segmentid in (1807585)) then '2' " +  

@@ -1,6 +1,6 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.entity;
 
-import javax.persistence.Transient;
+import javax.persistence.Transient; 
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,12 +22,9 @@ public class Capacity {
 	
 	@Column(name = "capaccountid")
 	private Integer capAccountId;
-	
-//	@Column(name = "capsegmentid")
-//	private Integer capSegmentId;
 
 	@Column(name = "ownerid")
-	private String ownerId;
+	private Integer ownerId;
 	
 	@Column(name = "offregister")
 	private String offRegister;
@@ -39,10 +36,10 @@ public class Capacity {
 	private Integer fleetSubSegment; // FLEET SUBSEGMENT REFERENCE DATA
 	
 	@Column(name = "gt")
-	private String gt; // this may be a subset of the entire capacity of the vessel
+	private double gt; // this may be a subset of the entire capacity of the vessel
 	
 	@Column(name = "kw")
-	private String kw; // this may be a subset of the entire capacity of the vessel
+	private double kw; // this may be a subset of the entire capacity of the vessel
 
 	@Column(name = "vesselid")
 	private Integer vesselId;
@@ -60,5 +57,10 @@ public class Capacity {
 
 	@JsonInclude()
 	@Transient
-	private List<PenaltyPoints> penaltyPoints;
+	private List<PenaltyPoints> penaltyPoints; // Used for Off-Register Capacity only (see CapacityDetail entity for Off-Register) ...
+	
+	/* OnRegister Indicator */
+	public boolean isOnRegister () {
+		return this.offRegister.equalsIgnoreCase("false");
+	}
 }

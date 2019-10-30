@@ -26,12 +26,12 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-//public class SecurityConfig {}
-
 @ComponentScan(basePackageClasses = KeycloakSecurityComponents.class)
 @EnableWebMvc
 @KeycloakConfiguration
 public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter implements WebMvcConfigurer {
+	
+	private static final String SFOS_SERVICE = "SFOS_SERVICE";
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
@@ -101,9 +101,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter impleme
 	protected void configure(HttpSecurity http) throws Exception {
 		super.configure(http);
 		http.authorizeRequests()
-			.antMatchers("/sfos/customer/capacity/**").hasRole("SFOS_SERVICE")
-				.antMatchers("/sfos/capacity/ccs/**").hasRole("SFOS_SERVICE")
-					.antMatchers("/sfos/capacity/ifis/**").hasRole("SFOS_SERVICE")
+			.antMatchers("/sfos/customer/capacity/**").hasRole(SFOS_SERVICE)
+				.antMatchers("/sfos/capacity/ccs/**").hasRole(SFOS_SERVICE)
+					.antMatchers("/sfos/capacity/ifis/**").hasRole(SFOS_SERVICE)
 						.anyRequest().denyAll();
 		http.csrf().disable();
 	}
