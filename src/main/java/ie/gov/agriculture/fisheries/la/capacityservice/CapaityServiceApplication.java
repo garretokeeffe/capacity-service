@@ -34,7 +34,6 @@ public class CapaityServiceApplication {
 	private String databaseUrl;
 	
 	@Bean(name = "dataSource")
-	@Profile({"tomcat","default"})
 	public DataSource jdbcDataSource() {
 	    
 	 
