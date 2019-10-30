@@ -22,26 +22,22 @@ public class CapaityServiceApplication {
 		SpringApplication.run(CapaityServiceApplication.class, args);
 	}
 	
-//	@Value("${database.user:IFISSN_INET}")
-	@Value("${database.user:IFIS}")
+
+	@Value("${database.user}")
 	private String databaseUser;
 
-//	@Value("${database.password:IFISSN_INET}")
-	@Value("${database.password:Wilco}")
+
+	@Value("${database.password}")
 	private String databasePassword;
 
+	@Value("${database.url}")
+	private String databaseUrl;
+	
 	@Bean(name = "dataSource")
 	@Profile({"tomcat","default"})
 	public DataSource jdbcDataSource() {
 	    
-	    String databaseUrl = "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS= (PROTOCOL = TCP)(HOST = sdbahpocm01-db.agriculture.gov.ie)(PORT = 1532)) "
-	                       + "(CONNECT_DATA=(SERVICE_NAME="
-	                       + "DEVC"
-	                       + ".agriculture.gov.ie))(HS=OK))";
-//	    String databaseUrl = "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS= (PROTOCOL = TCP)(HOST = sdbahpocm01-db.agriculture.gov.ie)(PORT = 1532)) "
-//                + "(CONNECT_DATA=(SERVICE_NAME="
-//                + "UATC"
-//                + ".agriculture.gov.ie))(HS=OK))";
+	 
 	    
 	    DriverManagerDataSource dataSource = new DriverManagerDataSource();
 	    dataSource.setDriverClassName("oracle.jdbc.OracleDriver");
