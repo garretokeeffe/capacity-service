@@ -100,11 +100,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter impleme
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		super.configure(http);
-		http.authorizeRequests()
-			.antMatchers("/sfos/customer/capacity/**").hasRole(SFOS_SERVICE)
-				.antMatchers("/sfos/capacity/ccs/**").hasRole(SFOS_SERVICE)
-					.antMatchers("/sfos/capacity/ifis/**").hasRole(SFOS_SERVICE)
-						.anyRequest().denyAll();
+		http.authorizeRequests().antMatchers("/","/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**","/actuator/refresh")
+		.permitAll().antMatchers("/sfos/customer/capacity/**","/sfos/capacity/ccs/**","/sfos/capacity/ifis/**").hasRole(SFOS_SERVICE).anyRequest().denyAll();
+	
 		http.csrf().disable();
 	}
 }
