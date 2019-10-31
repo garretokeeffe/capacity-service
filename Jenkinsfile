@@ -1,5 +1,4 @@
 
-
 pipeline {
   agent any
  
@@ -176,7 +175,13 @@ stages {
 		  }
 		}
 		
-		 stage('Create DEV') {
+		 stage(' Deploying in Dev ') {
+		 	when{
+				expression {
+					return BRANCH_NAME == 'development' && currentBuild.currentResult !='FAILURE' ;
+				}
+		   }
+
 		 
 		  steps {
 			script {
