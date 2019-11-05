@@ -1,337 +1,202 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.service;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import ie.gov.agriculture.fisheries.la.capacityservice.CapaityServiceApplication;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.modelmapper.ModelMapper;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.AllCapacityDTO;
-import ie.gov.agriculture.fisheries.la.capacityservice.dto.CapacityDTO;
-import ie.gov.agriculture.fisheries.la.capacityservice.dto.CapacityDetailDTO;
-import ie.gov.agriculture.fisheries.la.capacityservice.dto.PenaltyPointsDTO;
+import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
+import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
+import ie.gov.agriculture.fisheries.la.capacityservice.entity.PenaltyPoints;
+import ie.gov.agriculture.fisheries.la.capacityservice.entity.VesselSummary;
 import ie.gov.agriculture.fisheries.la.capacityservice.exception.ResourceNotFoundException;
+import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityPenaltyPointsRepository;
+import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityRepository;
+import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityDetailRepository;
+import ie.gov.agriculture.fisheries.la.capacityservice.repository.VesselSummaryRepository;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = CapaityServiceApplication.class)
 public class CapacityServiceTest {
-	private boolean doLogging = true;
+	private static final String CUSTOMER_ID = "2957";
+	private static final Integer CAPP_ACCOUNT_ID = 296123425;
+	private static final Integer CAPP_ACCOUNT_ID_2 = 296118221;
+	private static final Integer CAPP_ACCOUNT_ID_3 = 296139281;
+	private static final Integer CAPP_ACCOUNT_ID_4 = 296117114;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CapacityServiceTest.class);
+	private static final Integer VESSEL_ID = 292621439;
+	private static final Integer VESSEL_ID_2 = 157377595;
+	private static final Integer VESSEL_ID_3 = 13279;
 	
-	private String testClass = "CapacityServiceTest";
-	private String testMthd = "";
+	private static final Integer FLEET_SEGMENT_ID = 1;
+	private static final Integer FLEET_SUBSEGMENT_ID = 338360921;
 	
-	@Autowired
-	CustomerCapacityService customerCapacityService;
+	@Mock
+	CapacityRepository capacityRepository;
 	
-	@Test
-	public void getAllCapacityByCcsID_Async() {
-		testMthd = testClass + ".getAllCapacityByCcsID_Async().";
-		boolean success = true;
-		final String customerId = "FBY10086C";
+	@Mock
+	CustomerCapacityDetailRepository customerCapacityDetailRepository;
+	
+	@Mock
+	CapacityPenaltyPointsRepository capacityPenaltyPointsRepository;
+	
+	@Mock
+	VesselSummaryRepository vesselSummaryRepository;
+	
+	@InjectMocks
+	private CustomerCapacityService customerCapacityService;
+	
+	@Spy
+	private ModelMapper modelMapper;
+	
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
 		
-		this.doLog("T E S T - " + testMthd);
+		// ###############################
+		// CapacityRepository
+		// ###############################
+		List<Capacity> capacityList = new ArrayList<>();
 
-		try {
-			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true, true);
-			
-			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
-			
-			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
-			
-			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
-			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
-			
-			success = true;
-		} catch (Exception e) {
-			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
-			e.printStackTrace();
-			success = false;
-		}
-
-		assertTrue("T E S T - " + testMthd + " assert true.", success);
+		// Mock high level capacity record ...
+		Capacity capacity = new Capacity();
+		capacity.setCapAccountId(CAPP_ACCOUNT_ID);
+		capacity.setOwnerId(Integer.valueOf(CUSTOMER_ID).intValue());
+		capacity.setOffRegister("false");
+		capacity.setFleetSegment(FLEET_SEGMENT_ID);
+		capacity.setFleetSubSegment(FLEET_SUBSEGMENT_ID);
+		capacity.setGt(114.99);
+		capacity.setKw(197.21);
+		capacity.setVesselId(VESSEL_ID);
+		capacity.setProposed(null);
+		capacityList.add(capacity);
 		
-		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
+		Capacity capacity2 = new Capacity();
+		capacity2.setCapAccountId(CAPP_ACCOUNT_ID_2);
+		capacity.setOwnerId(Integer.valueOf(CUSTOMER_ID).intValue());
+		capacity2.setOffRegister("false");
+		capacity.setFleetSegment(FLEET_SEGMENT_ID);
+		capacity2.setFleetSubSegment(FLEET_SUBSEGMENT_ID);
+		capacity2.setGt(81.5);
+		capacity2.setKw(199.5);
+		capacity2.setVesselId(VESSEL_ID_2);
+		capacity2.setProposed(null);
+		capacityList.add(capacity2);
+		
+		Capacity capacity3 = new Capacity();
+		capacity3.setCapAccountId(CAPP_ACCOUNT_ID_3);
+		capacity.setOwnerId(Integer.valueOf(CUSTOMER_ID).intValue());
+		capacity3.setOffRegister("false");
+		capacity.setFleetSegment(FLEET_SEGMENT_ID);
+		capacity3.setFleetSubSegment(FLEET_SUBSEGMENT_ID);
+		capacity3.setGt(81.5);
+		capacity3.setKw(200);
+		capacity3.setVesselId(VESSEL_ID_3);
+		capacity3.setProposed(null);
+		capacityList.add(capacity3);
+		
+		Capacity capacity4 = new Capacity();
+		capacity4.setCapAccountId(CAPP_ACCOUNT_ID_4);
+		capacity.setOwnerId(Integer.valueOf(CUSTOMER_ID).intValue());
+		capacity4.setOffRegister("true");
+		capacity.setFleetSegment(FLEET_SEGMENT_ID);
+		capacity4.setFleetSubSegment(FLEET_SUBSEGMENT_ID);
+		capacity4.setGt(0);
+		capacity4.setKw(2.5);
+		capacity4.setVesselId(VESSEL_ID_3);
+		capacity4.setProposed("false");
+		capacityList.add(capacity4);
+		
+		// Mock / define Repository method calls ...
+		Mockito.when(capacityRepository.findCapacityByOwnerId(Mockito.eq(CUSTOMER_ID))).thenReturn(capacityList);
+		
+		// ###############################
+		// CustomerCapacityDetailRepository
+		// ###############################
+		List<CapacityDetail> capDetail = new ArrayList<>();
+		
+		CapacityDetail capacityDetail = new CapacityDetail();
+		capacityDetail.setId(296123606);
+		capacityDetail.setCapacityAmount(17.75);
+		capacityDetail.setCapacityType("GT");
+		capacityDetail.setOffRegisterDate(null);
+		capacityDetail.setCapSegmentId(296123426);
+		capacityDetail.setPointsAssigned(null);
+		capacityDetail.setSourceVesselId(null);
+		capacityDetail.setSourceVesselName(null);
+		capDetail.add(capacityDetail);
+		
+		CapacityDetail capacityDetail2 = new CapacityDetail();
+		capacityDetail2.setId(296123616);
+		capacityDetail2.setCapacityAmount(23.25);
+		capacityDetail2.setCapacityType("KW");
+		capacityDetail2.setOffRegisterDate(null);
+		capacityDetail2.setCapSegmentId(296123426);
+		capacityDetail2.setPointsAssigned(null);
+		capacityDetail2.setSourceVesselId(null);
+		capacityDetail2.setSourceVesselName(null);
+		capDetail.add(capacityDetail);
+		
+		CompletableFuture<List<CapacityDetail>> _capDetail = new CompletableFuture<List<CapacityDetail>>();
+		_capDetail.complete(capDetail);
+		
+		Mockito.when(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID))).thenReturn(_capDetail);
+		Mockito.when(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_2))).thenReturn(_capDetail);
+		Mockito.when(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_3))).thenReturn(_capDetail);
+		Mockito.when(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_4))).thenReturn(_capDetail);
+		
+		// ###############################
+		// CapacityPenaltyPointsRepository
+		// ###############################
+		List<PenaltyPoints> points = new ArrayList<>();
+		PenaltyPoints penaltyPoint = new PenaltyPoints();
+		penaltyPoint.setID(Integer.valueOf(100125).longValue());
+		penaltyPoint.setASSIGNEDPOINTS("6");
+		penaltyPoint.setEXPIRYDATE("10-Oct-2022");
+		points.add(penaltyPoint);
+		
+		CompletableFuture<List<PenaltyPoints>> penaltyPoints = new CompletableFuture<List<PenaltyPoints>>();
+		penaltyPoints.complete(points);
+		
+		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID))).thenReturn(penaltyPoints);
+		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_2))).thenReturn(penaltyPoints);
+		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_3))).thenReturn(penaltyPoints);
+		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_4))).thenReturn(penaltyPoints);
+		
+		// ###############################
+		// VesselSummaryRepository
+		// ###############################
+		VesselSummary vesselSummary = new VesselSummary();
+		vesselSummary.setId(292621439);
+		vesselSummary.setName("AUDACIOUS");
+		vesselSummary.setStatus(1811007);
+		vesselSummary.setCfr("IRL000I14505");
+		vesselSummary.setPrn("DA14");
+		vesselSummary.setGt("230");
+		vesselSummary.setKw("395");
+		
+		CompletableFuture<VesselSummary> _vesselSummary = new CompletableFuture<VesselSummary>();
+		_vesselSummary.complete(vesselSummary);
+		
+		Mockito.when(vesselSummaryRepository.findVesselSummaryByVesselId(Mockito.eq(VESSEL_ID))).thenReturn(_vesselSummary);
+		Mockito.when(vesselSummaryRepository.findVesselSummaryByVesselId(Mockito.eq(VESSEL_ID_2))).thenReturn(_vesselSummary);
+		Mockito.when(vesselSummaryRepository.findVesselSummaryByVesselId(Mockito.eq(VESSEL_ID_3))).thenReturn(_vesselSummary);
 	}
 	
 	@Test
-	public void getAllCapacityByCcsID_Sync() {
-		testMthd = testClass + ".getAllCapacityByCcsID_Sync().";
-		boolean success = true;
-		final String customerId = "FBY10086C";
-		
-		this.doLog("T E S T - " + testMthd);
-
-		try {
-			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true, false);
-			
-			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
-			
-			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
-			
-			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
-			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
-			
-			success = true;
-		} catch (Exception e) {
-			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
-			e.printStackTrace();
-			success = false;
-		}
-
-		assertTrue("T E S T - " + testMthd + " assert true.", success);
-		
-		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
-	}
-	
-	@Test
-	public void getAllCapacityByIfisID_Async() {
-		testMthd = testClass + ".getAllCapacityByIfisID_Async().";
-		boolean success = true;
-		final String customerId = "2957";
-		
-		this.doLog("T E S T - " + testMthd);
-
-		try {
-			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, true);
-			
-			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
-			
-			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
-			
-			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
-			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
-			
-			success = true;
-		} catch (Exception e) {
-			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
-			e.printStackTrace();
-			success = false;
-		}
-
-		assertTrue("T E S T - " + testMthd + " assert true.", success);
-		
-		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
-	}
-	
-	@Test
-	public void getAllCapacityByIfisID_Sync() {
-		testMthd = testClass + ".getAllCapacityByIfisID_Sync().";
-		boolean success = true;
-		final String customerId = "2957";
-		
-		this.doLog("T E S T - " + testMthd);
-
-		try {
-			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, false);
-			
-			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
-			
-			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 2957==allCapacityDTO.getOwnerId());
-			
-			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
-			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
-			
-			success = true;
-		} catch (Exception e) {
-			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
-			e.printStackTrace();
-			success = false;
-		}
-
-		assertTrue("T E S T - " + testMthd + " assert true.", success);
-		
-		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
-	}
-	
-	@Test(expected = ResourceNotFoundException.class)
-	public void getAllCapacityByIfisID_Async_ValidCustomerWithNoCapacity() throws ResourceNotFoundException {
-		testMthd = testClass + ".getAllCapacityByIfisID_Async_ValidCustomerWithNoCapacity().";
-		final String customerId = "140824327";
-		
-		this.doLog("T E S T - " + testMthd);
-
-		try {
-			customerCapacityService.getAllCapacity(customerId, false, true);
-		} catch (ResourceNotFoundException e) {
-			throw e;
-		} catch (Exception e) {
-			try {
-				throw e;
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
-	
-	@Test(expected = ResourceNotFoundException.class)
-	public void getAllCapacityByCcsID_Async_NegativeTest_ExceptionSatisified() throws ResourceNotFoundException {
-		testMthd = testClass + ".getAllCapacityByCcsID_Async_NegativeTest_ExceptionSatisified().";
-		final String customerId = "INVALID";
-		
-		this.doLog("T E S T - " + testMthd);
-
-		try {
-			customerCapacityService.getAllCapacity(customerId, true, true);
-		} catch (ResourceNotFoundException e) {
-			throw e;
-		} catch (Exception e) {
-			try {
-				throw e;
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
-	
-	@Test
-	public void testPenalityPointsForOnRegister() {
-		testMthd = testClass + ".testPenalityPointsForOnRegister().";
-		boolean success = true;
-		final String customerId = "4052";
-		
-		this.doLog("T E S T - " + testMthd);
-
-		try {
-			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, true);
-			
-			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
-			
-			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 4052==allCapacityDTO.getOwnerId());
-			
-			assertTrue(testMthd + " allCapacityDTO.getOnRegister()!=null assert true.", allCapacityDTO.getOnRegister()!=null);
-			
-			List<CapacityDTO> onRegister = allCapacityDTO.getOnRegister();
-			
-			int assignedPoints = 0;
-			String expiryDate = "";
-			
-			int j = onRegister.size();
-			for (int i=0; i<j; i++) {
-				CapacityDTO capacityDTO = onRegister.get(i);
-				
-				if (capacityDTO.getCapAccountId()==297458102) {
-					PenaltyPointsDTO points = (PenaltyPointsDTO) capacityDTO.getPenaltyPoints().get(0);
-					assignedPoints = points.getASSIGNEDPOINTS();
-					expiryDate = points.getEXPIRYDATE();
-				}
-			}
-			
-			assertTrue(testMthd + " assignedPoints==24 assert true.", assignedPoints==24);
-			assertTrue(testMthd + " expiryDate.equalsIgnoreCase(09/10/2018) assert true.", expiryDate.equalsIgnoreCase("09/10/2018"));
-			
-			success = true;
-		} catch (Exception e) {
-			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
-			e.printStackTrace();
-			success = false;
-		}
-
-		assertTrue("T E S T - " + testMthd + " assert true.", success);
-		
-		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
-	}
-	
-	@Test
-	public void testPenalityPointsForOffRegister() {
-		testMthd = testClass + ".testPenalityPointsForOffRegister().";
-		boolean success = true;
-		final String customerId = "749";
-		
-		this.doLog("T E S T - " + testMthd);
-
-		try {
-			AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, true);
-			
-			assertTrue(testMthd + " allCapacityDTO!=null assert true.", allCapacityDTO!=null);
-			
-			assertTrue(testMthd + " 2957==allCapacityDTO.getOwnerId() assert true.", 749==allCapacityDTO.getOwnerId());
-			
-			assertTrue(testMthd + " allCapacityDTO.getOffRegister()!=null assert true.", allCapacityDTO.getOffRegister()!=null);
-			
-			List<CapacityDTO> offRegister = allCapacityDTO.getOffRegister();
-			
-			int assignedPoints = 0;
-			String expiryDate = "";
-			
-			int j = offRegister.size();
-			for (int i=0; i<j; i++) {
-				CapacityDTO capacityDTO = offRegister.get(i);
-				
-				if (capacityDTO.getCapAccountId()==304964428) {
-					CapacityDetailDTO capacityDetailDTO = capacityDTO.getCapDetail().get(0);
-					PenaltyPointsDTO points = (PenaltyPointsDTO) capacityDetailDTO.getPenaltyPoints().get(0);
-					assignedPoints = points.getASSIGNEDPOINTS();
-					expiryDate = points.getEXPIRYDATE();
-				}
-			}
-			
-			assertTrue(testMthd + " assignedPoints==9 assert true.", assignedPoints==9);
-			assertTrue(testMthd + " expiryDate.equalsIgnoreCase(01/01/2020) assert true.", expiryDate.equalsIgnoreCase("01/01/2020"));
-			
-			success = true;
-		} catch (Exception e) {
-			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
-			e.printStackTrace();
-			success = false;
-		}
-
-		assertTrue("T E S T - " + testMthd + " assert true.", success);
-		
-		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
-	}
-	
-	@Test
-	public void getIfisIdByCcsId() {
-		testMthd = testClass + ".getIfisIdByCcsId().";
-		boolean success = true;
-		final String customerId = "FBY10063J";
-		
-		this.doLog("T E S T - " + testMthd);
-
-		try {
-			String ifisId = customerCapacityService.getIfisIdByCcsId(customerId);
-			
-			assertTrue(testMthd + " ifisId!=null assert true.", ifisId!=null);
-			
-			assertTrue(testMthd + " '150266852'.equalsIgnoreCase(ifisId) assert true.", "150266852".equalsIgnoreCase(ifisId));
-			
-			success = true;
-		} catch (Exception e) {
-			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
-			e.printStackTrace();
-			success = false;
-		}
-
-		assertTrue("T E S T - " + testMthd + " assert true.", success);
-		
-		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
-	}
-	
-	@Test(expected = ResourceNotFoundException.class)
-	public void getIfisIdByCcsId_NegativeTest_ExceptionSatisified() throws ResourceNotFoundException {
-		testMthd = testClass + ".getIfisIdByCcsId_NegativeTest_ExceptionSatisified().";
-		final String customerId = "INVALID";
-		
-		this.doLog("T E S T - " + testMthd);
-
-		try {
-			customerCapacityService.getIfisIdByCcsId(customerId);
-		} catch (ResourceNotFoundException e) {
-			throw e;
-		} catch (Exception e) {
-			throw e;
-		}
-	}
-	
-	private void doLog (final String in) {
-		if (doLogging) {
-			LOGGER.info(in);
-		}
+	public void testGetCustomerCapacityInformation() throws ResourceNotFoundException, InterruptedException, ExecutionException {
+		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(CUSTOMER_ID, false);
+		System.out.println(allCapacityDTO);
+		assertNotNull(allCapacityDTO);
+		assertEquals(CUSTOMER_ID, allCapacityDTO.getOwnerId().toString());
 	}
 }
+

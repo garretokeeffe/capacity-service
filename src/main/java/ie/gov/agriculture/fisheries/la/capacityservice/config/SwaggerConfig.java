@@ -8,14 +8,13 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import com.google.common.base.Predicates;
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.AuthorizationCodeGrantBuilder;
 import springfox.documentation.builders.OAuthBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.AuthorizationCodeGrant;
 import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.Contact;
 import springfox.documentation.service.GrantType;
@@ -30,10 +29,10 @@ import springfox.documentation.swagger.web.SecurityConfiguration;
 import springfox.documentation.swagger.web.SecurityConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@Profile({"tomcat"})
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig {                                    	
+public class SwaggerConfig {
+
 	@Value("${keycloak.auth-server-url}")
 	private String AUTH_SERVER;
 
@@ -89,9 +88,10 @@ public class SwaggerConfig {
 	private List<? extends SecurityScheme> buildSecurityScheme() {
 		List<SecurityScheme> secSchemes = new ArrayList<>();
 
-		GrantType grantType = new AuthorizationCodeGrant(new TokenRequestEndpoint( AUTH_SERVER + "/realms/" + REALM + "/protocol/openid-connect/auth", CLIENT_ID, CLIENT_SECRET),
-				new TokenEndpoint(AUTH_SERVER + "/realms/" + REALM + "/protocol/openid-connect/token", GROUP_NAME));
-				
+		GrantType grantType = new AuthorizationCodeGrantBuilder()
+				.tokenEndpoint(new TokenEndpoint(AUTH_SERVER + "/realms/" + REALM + "/protocol/openid-connect/token", GROUP_NAME))
+				.tokenRequestEndpoint(new TokenRequestEndpoint( AUTH_SERVER + "/realms/" + REALM + "/protocol/openid-connect/auth", CLIENT_ID, CLIENT_SECRET))
+				.build();		 
 
 		SecurityScheme oauth = new OAuthBuilder()
 				.name(REALM)
@@ -111,17 +111,16 @@ public class SwaggerConfig {
 		return scopes;
 	}
 
-	
 	private List<SecurityContext> buildSecurityContext() {
 		List<SecurityReference> securityReferences = new ArrayList<>();
 
-		securityReferences.add(
-				SecurityReference
-					.builder()
+		securityReferences.add (
+			SecurityReference
+				.builder()
 					.reference(REALM)
-					.scopes(scopes())
-					.build()
-					);
+						.scopes(scopes())
+							.build()
+		);
 
 		SecurityContext context = SecurityContext.builder().forPaths(Predicates.alwaysTrue()).securityReferences(securityReferences).build();
 

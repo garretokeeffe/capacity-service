@@ -25,22 +25,22 @@ public class CustomerCapacityController {
 	@Autowired
 	CustomerCapacityService customerCapacityService;
 	
-	@ApiOperation(value = "Retrieve complete All Capacity information for an individual customer using ccs customer id [e.g. http://localhost:8080/sfos/capacity/ccs/FBY10086C]")
+	@ApiOperation(value = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/ccs/FBY10086C]")
 	@GetMapping(path = "/ccs/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AllCapacityDTO> getCustomerCapacityByCcsID(HttpServletRequest request, @PathVariable(required = true) String customerId) throws Exception {
 		this.pushUserInfoToThread(request);
 		
-		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true, true);
+		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true);
 		
 		return new ResponseEntity<AllCapacityDTO>(allCapacityDTO, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "Retrieve complete All Capacity information for an individual customer using ifis customer id [e.g. http://localhost:8080/sfos/capacity/ifis/2957]")
+	@ApiOperation(value = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/ifis/2957]")
 	@GetMapping(path = "/ifis/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AllCapacityDTO> getCustomerCapacityByIfisID(HttpServletRequest request, @PathVariable(required = true) String customerId) throws Exception {
 		this.pushUserInfoToThread(request);
 		
-		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false, true);
+		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false);
 		
 		return new ResponseEntity<AllCapacityDTO>(allCapacityDTO, HttpStatus.OK);
 	}
