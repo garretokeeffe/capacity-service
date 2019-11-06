@@ -169,7 +169,7 @@ public class CapacityServiceTest {
 		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID))).thenReturn(penaltyPoints);
 		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_2))).thenReturn(penaltyPoints);
 		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_3))).thenReturn(penaltyPoints);
-		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_4))).thenReturn(penaltyPoints);
+		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId_Sync(Mockito.eq(CAPP_ACCOUNT_ID_4))).thenReturn(penaltyPoint);
 		
 		// ###############################
 		// VesselSummaryRepository
@@ -197,6 +197,23 @@ public class CapacityServiceTest {
 		System.out.println(allCapacityDTO);
 		assertNotNull(allCapacityDTO);
 		assertEquals(CUSTOMER_ID, allCapacityDTO.getOwnerId().toString());
+		
+		// Verify various Repository methods called as expected ...
+		Mockito.verify(capacityRepository, Mockito.times(1)).findCapacityByOwnerId(CUSTOMER_ID);
+		
+		Mockito.verify(customerCapacityDetailRepository, Mockito.times(1)).findCapacityDetailByCapAccountId(CAPP_ACCOUNT_ID);
+		Mockito.verify(customerCapacityDetailRepository, Mockito.times(1)).findCapacityDetailByCapAccountId(CAPP_ACCOUNT_ID_2);
+		Mockito.verify(customerCapacityDetailRepository, Mockito.times(1)).findCapacityDetailByCapAccountId(CAPP_ACCOUNT_ID_3);
+		Mockito.verify(customerCapacityDetailRepository, Mockito.times(1)).findCapacityDetailByCapAccountId(CAPP_ACCOUNT_ID_4);
+		
+		Mockito.verify(capacityPenaltyPointsRepository, Mockito.times(1)).findCustomerCapacityPenaltyPointsByCapAccountId(CAPP_ACCOUNT_ID);
+		Mockito.verify(capacityPenaltyPointsRepository, Mockito.times(1)).findCustomerCapacityPenaltyPointsByCapAccountId(CAPP_ACCOUNT_ID_2);
+		Mockito.verify(capacityPenaltyPointsRepository, Mockito.times(1)).findCustomerCapacityPenaltyPointsByCapAccountId(CAPP_ACCOUNT_ID_3);
+		Mockito.verify(capacityPenaltyPointsRepository, Mockito.times(2)).findCustomerCapacityPenaltyPointsByCapAccountId_Sync(CAPP_ACCOUNT_ID_4);
+		
+		Mockito.verify(vesselSummaryRepository, Mockito.times(1)).findVesselSummaryByVesselId(VESSEL_ID);
+		Mockito.verify(vesselSummaryRepository, Mockito.times(1)).findVesselSummaryByVesselId(VESSEL_ID_2);
+		Mockito.verify(vesselSummaryRepository, Mockito.times(2)).findVesselSummaryByVesselId(VESSEL_ID_3);
 	}
 }
 
