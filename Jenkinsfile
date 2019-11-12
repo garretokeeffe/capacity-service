@@ -1,4 +1,3 @@
-
 pipeline {
   agent any
  
@@ -174,11 +173,14 @@ stages {
 			}
 		  }
 		}
-		
-		 stage(' Deploying in Dev ') {
+		    stage(' Deploying in Dev ') {
 		 	when{
 				expression {
-					return BRANCH_NAME == 'development' && currentBuild.currentResult !='FAILURE' ;
+					openshift.withCluster( CLUSTER_NAME ) {
+						openshift.withProject( PROJECT_DEV ) {
+							return BRANCH_NAME == 'development' && currentBuild.currentResult !='FAILURE' && !openshift.selector("dc",OPENSHIFT_PROJECT_NAME).exists();
+						}
+					}
 				}
 		   }
 
@@ -188,11 +190,6 @@ stages {
 			  openshift.withCluster( CLUSTER_NAME ) {
 			      openshift.withProject( PROJECT_DEV ) {
 				  
-						if (openshift.selector('dc', '${OPENSHIFT_PROJECT_NAME}').exists()) {
-							openshift.selector('dc', '${OPENSHIFT_PROJECT_NAME}').delete()
-							openshift.selector('svc', '${OPENSHIFT_PROJECT_NAME}').delete()
-							openshift.selector('route', '${OPENSHIFT_PROJECT_NAME}').delete()
-						}
 						openshift.newApp(OPENSHIFT_PROJECT_NAME+":latest", "--name="+OPENSHIFT_PROJECT_NAME).narrow('svc').expose()
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'IFIS_DB_CRED',
 							usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
@@ -221,12 +218,14 @@ stages {
 				  openshift.withCluster(CLUSTER_NAME) {
 						openshift.withProject( PROJECT_DEV ){
 							
-							def latestDeploymentVersion = openshift.selector('dc',OPENSHIFT_PROJECT_NAME).object().status.latestVersion
+					    	def latestDeploymentVersion = openshift.selector('dc',OPENSHIFT_PROJECT_NAME).object().status.latestVersion
 							def rc = openshift.selector('rc', OPENSHIFT_PROJECT_NAME+"-${latestDeploymentVersion}")
-							rc.untilEach(1){
-								def rcMap = it.object()
-								return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
-							}
+							   timeout (time: 10, unit: 'MINUTES') {
+									rc.untilEach(1){
+										def rcMap = it.object()
+										return (rcMap.status.replicas.equals(rcMap.status.readyReplicas))
+									}
+								}
 						}
 					}
 				  
@@ -236,6 +235,7 @@ stages {
 			  }
 		
 		}
+	
 	
     }
 
