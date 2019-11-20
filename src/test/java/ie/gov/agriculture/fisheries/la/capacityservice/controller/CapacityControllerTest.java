@@ -1,122 +1,84 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import org.junit.Before;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ie.gov.agriculture.fisheries.la.capacityservice.CapaityServiceApplication;
-import ie.gov.agriculture.fisheries.la.capacityservice.repository.CCSRepository;
-import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityPenaltyPointsRepository;
-import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityRepository;
-import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityDetailRepository;
-import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityRepository;
-import ie.gov.agriculture.fisheries.la.capacityservice.repository.VesselSummaryRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import ie.gov.agriculture.fisheries.la.capacityservice.dto.AllCapacityDTO;
+import ie.gov.agriculture.fisheries.la.capacityservice.dto.CustomerCapacityDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.service.CustomerCapacityService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = CapaityServiceApplication.class)
+@ExtendWith(MockitoExtension.class)
+@RunWith(JUnitPlatform.class)
 public class CapacityControllerTest {
-	private String testClass = "CapacityControllerTest";
-	private String testMthd = "";
+	private static final String CUSTOMER_ID = "1000";
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CapacityControllerTest.class);
-	
-	private boolean doLogging = true;
-	
-	private MockMvc mockMvc;
-	
-	@InjectMocks
-	private CustomerCapacityController controller;
-	
-	@Mock
-	CustomerCapacityService customerCapacityService;
-	
-	@Mock
-	CustomerCapacityRepository customerCapacityRepository;
-	
-	@Mock
-	CapacityRepository capacityRepository;
-	
-	@Mock
-	CustomerCapacityDetailRepository customerCapacityDetailRepository;
-	
-	@Mock
-	VesselSummaryRepository vesselSummaryRepository;
-	
-	@Mock
-	CapacityPenaltyPointsRepository capacityPenaltyPointsRepository;
-	
-	@Mock
-	CCSRepository ccsRepository;
-	
-	@Mock
-    ModelMapper modelMapper;
-	
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-	}
-	
-	@Test
-	public void getCustomerCapacity() {
-		testMthd = testClass + ".getCustomerCapacity().";
-		boolean success = true;
-		final String ccsFishBuyerId = "FBY10086C";
-		final String ifisCustomerId = "4052";
-		
-		this.doLog("T E S T - " + testMthd);
+    @InjectMocks
+    CustomerCapacityController ceustomerCapacityController;
+     
+    @Mock
+    CustomerCapacityService customerCapacityService;
 
-		try {
-			// ####################### Get by CCS ID ####################### ...
-			MvcResult mvcResult = mockMvc.perform(get("/sfos/capacity/ccs/" + ccsFishBuyerId).accept(MediaType.APPLICATION_JSON)).andReturn();
-			assertEquals(mvcResult.getResponse().getStatus(), HttpStatus.OK.value());
-			assertEquals(content()!=null, true);
-			
-			// Negative test - Invalid URL ...
-			mvcResult = mockMvc.perform(get("/sfos/capacity/ccs-INVALID/" + ccsFishBuyerId).accept(MediaType.APPLICATION_JSON)).andReturn();
-			assertEquals(mvcResult.getResponse().getStatus(), HttpStatus.NOT_FOUND.value());
-			
-			// ####################### Get by IFIS ID ####################### ...
-			mvcResult = mockMvc.perform(get("/sfos/capacity/ifis/" + ifisCustomerId).accept(MediaType.APPLICATION_JSON)).andReturn();
-			assertEquals(mvcResult.getResponse().getStatus(), HttpStatus.OK.value());
-			assertEquals(content()!=null, true);
-			
-			// Negative test - Invalid URL ...
-			mvcResult = mockMvc.perform(get("/sfos/capacity/ifis-INVALID/" + ifisCustomerId).accept(MediaType.APPLICATION_JSON)).andReturn();
-			assertEquals(mvcResult.getResponse().getStatus(), HttpStatus.NOT_FOUND.value());
-			
-			success = true;
-		} catch (Exception e) {
-			this.doLog("T E S T - " + testMthd + " - error:" + e.getMessage());
-			e.printStackTrace();
-			success = false;
-		}
+    @Test
+    public void testGetCustomerCapacityByCcsID() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        
+        AllCapacityDTO allCapacityDTO = new AllCapacityDTO();
+         
+        when(customerCapacityService.getAllCapacity(anyString(), eq(true))).thenReturn(allCapacityDTO);
 
-		assertTrue("T E S T - " + testMthd + " assert true.", success);
-		
-		this.doLog("T E S T - " + testMthd + " complete: success = " + success);
-	}
-	
-	private void doLog (final String in) {
-		if (doLogging) {
-			LOGGER.info(in);
-		}
-	}
+        ResponseEntity<AllCapacityDTO> responseEntity = ceustomerCapacityController.getCustomerCapacityByCcsID(request, CUSTOMER_ID);
+        
+        assertThat(responseEntity).isNotNull();
+        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
+        Mockito.verify(customerCapacityService, Mockito.times(1)).getAllCapacity(anyString(), eq(true));
+    }
+    
+    @Test
+    public void testGetCustomerCapacityByIfisID() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        
+        AllCapacityDTO allCapacityDTO = new AllCapacityDTO();
+         
+        when(customerCapacityService.getAllCapacity(anyString(), eq(false))).thenReturn(allCapacityDTO);
+
+        ResponseEntity<AllCapacityDTO> responseEntity = ceustomerCapacityController.getCustomerCapacityByIfisID(request, CUSTOMER_ID);
+        
+        assertThat(responseEntity).isNotNull();
+        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
+        Mockito.verify(customerCapacityService, Mockito.times(1)).getAllCapacity(anyString(), eq(false));
+    }
+    
+    @Test
+    public void testGetCustomerCapacityInformation() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        
+        List<CustomerCapacityDTO> listCustomerCapacityDTO = new ArrayList<>();
+         
+        when(customerCapacityService.getCustomerCapacityInformation(anyString())).thenReturn(listCustomerCapacityDTO);
+
+        ResponseEntity<List<CustomerCapacityDTO>> responseEntity = ceustomerCapacityController.getCustomerCapacityInformation(request, CUSTOMER_ID);
+        
+        assertThat(responseEntity).isNotNull();
+        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
+        Mockito.verify(customerCapacityService, Mockito.times(1)).getCustomerCapacityInformation(anyString());
+    }
 }
