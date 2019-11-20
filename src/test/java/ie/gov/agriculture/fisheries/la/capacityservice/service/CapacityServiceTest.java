@@ -2,18 +2,25 @@ package ie.gov.agriculture.fisheries.la.capacityservice.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyInt;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ie.gov.agriculture.fisheries.la.capacityservice.CapaityServiceApplication;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.AllCapacityDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
@@ -24,7 +31,10 @@ import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityPenalt
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityDetailRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.VesselSummaryRepository;
+import org.junit.platform.runner.JUnitPlatform;
 
+@ExtendWith(MockitoExtension.class)
+@RunWith(JUnitPlatform.class)
 public class CapacityServiceTest {
 	private static final String CUSTOMER_ID = "2957";
 	private static final Integer CAPP_ACCOUNT_ID = 296123425;
@@ -57,10 +67,8 @@ public class CapacityServiceTest {
 	@Spy
 	private ModelMapper modelMapper;
 	
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		
+	@Test
+	public void testGetCustomerCapacityInformation() throws ResourceNotFoundException, InterruptedException, ExecutionException {
 		// ###############################
 		// CapacityRepository
 		// ###############################
@@ -148,10 +156,7 @@ public class CapacityServiceTest {
 		CompletableFuture<List<CapacityDetail>> _capDetail = new CompletableFuture<List<CapacityDetail>>();
 		_capDetail.complete(capDetail);
 		
-		Mockito.when(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID))).thenReturn(_capDetail);
-		Mockito.when(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_2))).thenReturn(_capDetail);
-		Mockito.when(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_3))).thenReturn(_capDetail);
-		Mockito.when(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_4))).thenReturn(_capDetail);
+		Mockito.when(customerCapacityDetailRepository.findCapacityDetailByCapAccountId(anyInt())).thenReturn(_capDetail);
 		
 		// ###############################
 		// CapacityPenaltyPointsRepository
@@ -166,10 +171,8 @@ public class CapacityServiceTest {
 		CompletableFuture<List<PenaltyPoints>> penaltyPoints = new CompletableFuture<List<PenaltyPoints>>();
 		penaltyPoints.complete(points);
 		
-		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID))).thenReturn(penaltyPoints);
-		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_2))).thenReturn(penaltyPoints);
-		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(Mockito.eq(CAPP_ACCOUNT_ID_3))).thenReturn(penaltyPoints);
-		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId_Sync(Mockito.eq(CAPP_ACCOUNT_ID_4))).thenReturn(penaltyPoint);
+		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId(anyInt())).thenReturn(penaltyPoints);
+		Mockito.when(capacityPenaltyPointsRepository.findCustomerCapacityPenaltyPointsByCapAccountId_Sync(anyInt())).thenReturn(penaltyPoint);
 		
 		// ###############################
 		// VesselSummaryRepository
@@ -186,13 +189,9 @@ public class CapacityServiceTest {
 		CompletableFuture<VesselSummary> _vesselSummary = new CompletableFuture<VesselSummary>();
 		_vesselSummary.complete(vesselSummary);
 		
-		Mockito.when(vesselSummaryRepository.findVesselSummaryByVesselId(Mockito.eq(VESSEL_ID))).thenReturn(_vesselSummary);
-		Mockito.when(vesselSummaryRepository.findVesselSummaryByVesselId(Mockito.eq(VESSEL_ID_2))).thenReturn(_vesselSummary);
-		Mockito.when(vesselSummaryRepository.findVesselSummaryByVesselId(Mockito.eq(VESSEL_ID_3))).thenReturn(_vesselSummary);
-	}
-	
-	@Test
-	public void testGetCustomerCapacityInformation() throws ResourceNotFoundException, InterruptedException, ExecutionException {
+		Mockito.when(vesselSummaryRepository.findVesselSummaryByVesselId(anyInt())).thenReturn(_vesselSummary);
+		
+		// Run Tests ...
 		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(CUSTOMER_ID, false);
 		System.out.println(allCapacityDTO);
 		assertNotNull(allCapacityDTO);
@@ -200,20 +199,9 @@ public class CapacityServiceTest {
 		
 		// Verify various Repository methods called as expected ...
 		Mockito.verify(capacityRepository, Mockito.times(1)).findCapacityByOwnerId(CUSTOMER_ID);
-		
-		Mockito.verify(customerCapacityDetailRepository, Mockito.times(1)).findCapacityDetailByCapAccountId(CAPP_ACCOUNT_ID);
-		Mockito.verify(customerCapacityDetailRepository, Mockito.times(1)).findCapacityDetailByCapAccountId(CAPP_ACCOUNT_ID_2);
-		Mockito.verify(customerCapacityDetailRepository, Mockito.times(1)).findCapacityDetailByCapAccountId(CAPP_ACCOUNT_ID_3);
-		Mockito.verify(customerCapacityDetailRepository, Mockito.times(1)).findCapacityDetailByCapAccountId(CAPP_ACCOUNT_ID_4);
-		
-		Mockito.verify(capacityPenaltyPointsRepository, Mockito.times(1)).findCustomerCapacityPenaltyPointsByCapAccountId(CAPP_ACCOUNT_ID);
-		Mockito.verify(capacityPenaltyPointsRepository, Mockito.times(1)).findCustomerCapacityPenaltyPointsByCapAccountId(CAPP_ACCOUNT_ID_2);
-		Mockito.verify(capacityPenaltyPointsRepository, Mockito.times(1)).findCustomerCapacityPenaltyPointsByCapAccountId(CAPP_ACCOUNT_ID_3);
-		Mockito.verify(capacityPenaltyPointsRepository, Mockito.times(2)).findCustomerCapacityPenaltyPointsByCapAccountId_Sync(CAPP_ACCOUNT_ID_4);
-		
-		Mockito.verify(vesselSummaryRepository, Mockito.times(1)).findVesselSummaryByVesselId(VESSEL_ID);
-		Mockito.verify(vesselSummaryRepository, Mockito.times(1)).findVesselSummaryByVesselId(VESSEL_ID_2);
-		Mockito.verify(vesselSummaryRepository, Mockito.times(2)).findVesselSummaryByVesselId(VESSEL_ID_3);
+		Mockito.verify(customerCapacityDetailRepository, Mockito.times(4)).findCapacityDetailByCapAccountId(anyInt());
+		Mockito.verify(capacityPenaltyPointsRepository, Mockito.times(3)).findCustomerCapacityPenaltyPointsByCapAccountId(anyInt());
+		Mockito.verify(vesselSummaryRepository, Mockito.times(4)).findVesselSummaryByVesselId(anyInt());
 	}
 }
 
