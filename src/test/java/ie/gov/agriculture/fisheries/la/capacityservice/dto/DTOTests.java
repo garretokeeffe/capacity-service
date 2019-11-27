@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ie.gov.agriculture.fisheries.la.capacityservice.CapaityServiceApplication;
 
-@Ignore
+@Ignore // Ignoring DTOTests as coverage not required for getters & setters ... 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CapaityServiceApplication.class)
 public class DTOTests {
@@ -97,18 +97,18 @@ public class DTOTests {
 			PenaltyPointsDTO pointDto = new PenaltyPointsDTO();
 			
 			pointDto.setID(Integer.valueOf(297458165).longValue());
-			pointDto.setCAPACCOUNTID("297458102");
-			pointDto.setCAPSEGMENTID("297458103");
-			pointDto.setASSIGNEDPOINTS(12);
-			pointDto.setEXPIRYDATE("09/10/2018");
-			pointDto.setPENALTYCOMMENT("Test!");
+			pointDto.setCapAccountId("297458102");
+			pointDto.setCapSegmentId("297458103");
+			pointDto.setAssignedPoints(12);
+			pointDto.setExpiryDate("09/10/2018");
+			pointDto.setPenaltyComment("Test!");
 			
 			assertTrue(testMthd + " pointDto.getID()==297458165 assert true.", pointDto.getID()==297458165);
-			assertTrue(testMthd + " pointDto.getCAPACCOUNTID().equalsIgnoreCase(297458102) assert true.", pointDto.getCAPACCOUNTID().equalsIgnoreCase("297458102"));
-			assertTrue(testMthd + " pointDto.getCAPSEGMENTID().equalsIgnoreCase(297458103) assert true.", pointDto.getCAPSEGMENTID().equalsIgnoreCase("297458103"));
-			assertTrue(testMthd + " pointDto.getASSIGNEDPOINTS()==12 assert true.", pointDto.getASSIGNEDPOINTS()==12);
-			assertTrue(testMthd + " pointDto.getEXPIRYDATE().equalsIgnoreCase(09/10/2018) assert true.", pointDto.getEXPIRYDATE().equalsIgnoreCase("09/10/2018"));
-			assertTrue(testMthd + " pointDto.setPENALTYCOMMENT().equalsIgnoreCase(09/10/2018) assert true.", pointDto.getPENALTYCOMMENT().equalsIgnoreCase("Test!"));
+			assertTrue(testMthd + " pointDto.getCAPACCOUNTID().equalsIgnoreCase(297458102) assert true.", pointDto.getCapAccountId().equalsIgnoreCase("297458102"));
+			assertTrue(testMthd + " pointDto.getCAPSEGMENTID().equalsIgnoreCase(297458103) assert true.", pointDto.getCapSegmentId().equalsIgnoreCase("297458103"));
+			assertTrue(testMthd + " pointDto.getASSIGNEDPOINTS()==12 assert true.", pointDto.getAssignedPoints()==12);
+			assertTrue(testMthd + " pointDto.getEXPIRYDATE().equalsIgnoreCase(09/10/2018) assert true.", pointDto.getExpiryDate().equalsIgnoreCase("09/10/2018"));
+			assertTrue(testMthd + " pointDto.setPENALTYCOMMENT().equalsIgnoreCase(09/10/2018) assert true.", pointDto.getPenaltyComment().equalsIgnoreCase("Test!"));
 			
 			assertNotNull(pointDto.toString());
 			

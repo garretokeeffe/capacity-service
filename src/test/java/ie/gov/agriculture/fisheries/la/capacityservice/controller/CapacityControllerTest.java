@@ -65,20 +65,4 @@ public class CapacityControllerTest {
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
         Mockito.verify(customerCapacityService, Mockito.times(1)).getAllCapacity(anyString(), eq(false));
     }
-    
-    @Test
-    public void testGetCustomerCapacityInformation() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        
-        List<CustomerCapacityDTO> listCustomerCapacityDTO = new ArrayList<>();
-         
-        when(customerCapacityService.getCustomerCapacityInformation(anyString())).thenReturn(listCustomerCapacityDTO);
-
-        ResponseEntity<List<CustomerCapacityDTO>> responseEntity = ceustomerCapacityController.getCustomerCapacityInformation(request, CUSTOMER_ID);
-        
-        assertThat(responseEntity).isNotNull();
-        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
-        Mockito.verify(customerCapacityService, Mockito.times(1)).getCustomerCapacityInformation(anyString());
-    }
 }

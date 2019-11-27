@@ -19,7 +19,7 @@ import ie.gov.agriculture.fisheries.la.capacityservice.entity.PenaltyPoints;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.TrackRecord;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.VesselSummary;
 
-@Ignore
+@Ignore // Ignoring EnityTests as coverage not required for getters & setters ...
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CapaityServiceApplication.class)
 public class EnityTests {

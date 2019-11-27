@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import lombok.Getter;
 import lombok.ToString;
+import org.slf4j.MDC;
 
 /**
  * Utility class for UserPrincipal details
@@ -75,7 +76,14 @@ public class UserPrincipal {
 	 * @return UserPrincipal object
 	 */
 	public static UserPrincipal getUserPrincipal(HttpServletRequest request) {
-		return new UserPrincipal(request);
+		UserPrincipal up = new UserPrincipal(request);
+		
+		// Push user info to thread to aid logging ...
+		MDC.put("name", up.getName());
+		MDC.put("userName", up.getUsername());
+		MDC.put("email", up.getEmail());
+		
+		return up;
 	}
 
 	/**
