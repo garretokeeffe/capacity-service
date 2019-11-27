@@ -8,10 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.AllCapacityDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.CapacityDTO;
-import ie.gov.agriculture.fisheries.la.capacityservice.dto.CustomerCapacityDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
-import ie.gov.agriculture.fisheries.la.capacityservice.entity.CustomerCapacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.IfisWrapper;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.PenaltyPoints;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.VesselSummary;
@@ -366,32 +364,6 @@ public class CustomerCapacityService {
 	 */
 	private CapacityDTO convertCapacityToDTO(Capacity capacity) {
 		return modelMapper.map(capacity, CapacityDTO.class);
-    }
-	
-	/***
-	 * public List<CustomerCapacityDTO> getCustomerCapacityInformation (String customerId);
-	 * @param customerId
-	 * @return List<CustomerCapacityDTO>
-	 */
-	public List<CustomerCapacityDTO> getCustomerCapacityInformation (String customerId) {
-		LOGGER.debug("CustomerCapacityService.getCustomerCapacityInformation:{}", customerId);
-		
-		List<CustomerCapacityDTO> listCustomerCapacityDTO = new ArrayList<CustomerCapacityDTO>();
-		
-		List<CustomerCapacity> listCustomerCapacity = customerCapacityRepository.findCapacityInformationByOwnerId(customerId);
-		
-		listCustomerCapacity.forEach(item -> listCustomerCapacityDTO.add(this.convertCustomerCapacityToDTO(item)));
-		
-		return listCustomerCapacityDTO;
-	}
-	
-	/***
-	 * private CustomerCapacityDTO convertCustomerCapacityToDTO(CustomerCapacity customerCapacity)
-	 * @param customerCapacity
-	 * @return CustomerCapacityDTO
-	 */
-	private CustomerCapacityDTO convertCustomerCapacityToDTO(CustomerCapacity customerCapacity) {
-		return modelMapper.map(customerCapacity, CustomerCapacityDTO.class);
     }
 	
 	/**
