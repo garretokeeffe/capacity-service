@@ -17,7 +17,7 @@ public class CapacityDTO {
 	private Integer capAccountId;
 	
 	@ApiModelProperty(required = true, value = "Integer defining the customer / owner id.")
-	private Integer ownerId;
+	private String ownerId;
 	
 	@ApiModelProperty(required = true, value = "Boolean indicating if capacity is 'off-register'.")
 	private boolean offRegister;

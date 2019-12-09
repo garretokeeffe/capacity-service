@@ -10,7 +10,7 @@ import lombok.Setter;
 @ApiModel(description="The AllCapacityDTO class storing high-level customer capacity information.")
 public class AllCapacityDTO {
 	@ApiModelProperty(required = true, value = "Integer defining owner / customer id.")
-	private Integer ownerId;
+	private String ownerId;
 	
 	@ApiModelProperty(required = true, value = "CapacityDTO list defining owner / customer 'On-Register' capacity.")
 	private List<CapacityDTO> onRegister;
