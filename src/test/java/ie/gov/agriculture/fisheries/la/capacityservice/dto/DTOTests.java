@@ -49,14 +49,14 @@ public class DTOTests {
 			capacityItemDto.setGt(100);
 			capacityItemDto.setKw(200);
 			capacityItemDto.setOffRegister(true);
-			capacityItemDto.setOwnerId(1200);
+			capacityItemDto.setOwnerId("1200");
 			capacityItemDto.setVesselId(869);
 			capacityItemDto.setVesselSummary(new VesselSummaryDTO());
 			capacityItemDto.setPenaltyPoints(pointsDtoList);
 			capacityItemDto.setProposed(true);
 			
 			assertTrue(testMthd + " capacityItemDto.getCapAccountId()==1001 assert true.", capacityItemDto.getCapAccountId()==1001);
-			assertTrue(testMthd + " capacityItemDto.getOwnerId()==1200 assert true.", capacityItemDto.getOwnerId()==1200);
+			assertTrue(testMthd + " capacityItemDto.getOwnerId()==1200 assert true.", capacityItemDto.getOwnerId().equalsIgnoreCase("1200"));
 			assertTrue(testMthd + " capacityItemDto.getOffRegister().equalsIgnoreCase(true) assert true.", capacityItemDto.isOffRegister());
 			assertTrue(testMthd + " capacityItemDto.getFleetSegment().equalsIgnoreCase(22) assert true.", capacityItemDto.getFleetSegment()==22);
 			assertTrue(testMthd + " capacityItemDto.getFleetSubSegment().equalsIgnoreCase(2002) assert true.", capacityItemDto.getFleetSubSegment()==2002);
