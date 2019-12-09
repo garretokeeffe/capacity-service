@@ -13,6 +13,7 @@ import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.IfisWrapper;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.PenaltyPoints;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.VesselSummary;
+import ie.gov.agriculture.fisheries.la.capacityservice.exception.CustomerCapacityException;
 import ie.gov.agriculture.fisheries.la.capacityservice.exception.ResourceNotFoundException;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CCSRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityPenaltyPointsRepository;
@@ -85,17 +86,7 @@ public class CustomerCapacityService {
 		
 		// Retrieve capacity detail items ...
 		// ... Note - always calling the ASync method, Sync methods retained (but commented out) as fall back if required ...
-		capacity.forEach(item -> {
-			try {
-				this.getCapacityDetailItems_ASync(item);
-			} catch(InterruptedException e) {
-				LOGGER.error(CAP_DETAIL_ERROR_MESSAGE + customerId, e);
-				Thread.currentThread().interrupt();
-			} 
-			catch (ResourceNotFoundException |  ExecutionException e) {
-				LOGGER.error(CAP_DETAIL_ERROR_MESSAGE + customerId, e);
-			}
-		});
+		capacity.forEach(item -> this.getCapacityDetailItems_ASync(item));
 		
 //		if (useAsyncCallForDetail) {
 //			capacity.forEach(item -> {
@@ -127,7 +118,7 @@ public class CustomerCapacityService {
 		// Convert capacity items to DTO ...
 		capacity.forEach(item -> capacityDTO.add(this.convertCapacityToDTO(item)));
 		
-		allCapacityDTO.setOwnerId(Integer.valueOf(ifisCustomerId));
+		allCapacityDTO.setOwnerId(ifisCustomerId);
 		
 		// Set Off-Register capacity ...
 		allCapacityDTO.setOffRegister (
@@ -148,7 +139,7 @@ public class CustomerCapacityService {
 	 * @throws ResourceNotFoundException
 	 * Async function to run call in parallel
 	 */
-	private void getCapacityDetailItems_ASync(Capacity capacity) throws ResourceNotFoundException, InterruptedException, ExecutionException {
+	private void getCapacityDetailItems_ASync(Capacity capacity) throws CustomerCapacityException {
 		LOGGER.debug("CustomerCapacityService.getCapacityDetailItems_ASync: {}", capacity.getCapAccountId());
 		
 		final long startTime = System.currentTimeMillis();
@@ -162,9 +153,14 @@ public class CustomerCapacityService {
 			capacityDetail = this.getCapacityDetailByCapAccountId(capacity);
 			queriedObjects.add(capacityDetail);
 		}
+		catch (InterruptedException | ExecutionException e) {
+			LOGGER.debug(CUSTOMER_CAP_ERROR_MESSAGE, capAccountId);
+			Thread.currentThread().interrupt();
+			throw new CustomerCapacityException(e.getMessage());
+		}
 		catch (ResourceNotFoundException e) {
 			LOGGER.debug(CUSTOMER_CAP_ERROR_MESSAGE, capAccountId);
-			throw e;
+			throw new CustomerCapacityException(e.getMessage());
 		}
 		
 		// For OnRegister, get rolled-up penalty points with latest expiry date if applicable ...
@@ -177,7 +173,7 @@ public class CustomerCapacityService {
 		}
 		catch (ResourceNotFoundException e) {
 			LOGGER.debug(PEN_POINTS_ERROR_MESSAGE, capAccountId);
-			throw e;
+			throw new CustomerCapacityException(e.getMessage());
 		}
 		
 		// Get vessel summary ...
@@ -188,7 +184,7 @@ public class CustomerCapacityService {
 		}
 		catch (ResourceNotFoundException e) {
 			LOGGER.debug(VESSEL_SUM_ERROR_MESSAGE, capAccountId);
-			throw e;
+			throw new CustomerCapacityException(e.getMessage());
 		}
 		
 		CompletableFuture[] futures = queriedObjects.toArray(new CompletableFuture[queriedObjects.size()]);
@@ -201,7 +197,8 @@ public class CustomerCapacityService {
 			capacity.setVesselSummary(vesselSummary==null ? null : vesselSummary.get());
 		} catch (InterruptedException | ExecutionException e) {
 			LOGGER.error("Error handling Capacity Detail Items (ASync), cap account: {}", capAccountId, e);
-			throw e;
+			Thread.currentThread().interrupt();
+			throw new CustomerCapacityException(e.getMessage());
 		}
 		
 		LOGGER.info("CustomerCapacityService.getCapacityDetailItems_ASync({}) EElapsed time(ms): {}", capAccountId, (System.currentTimeMillis() - startTime));
