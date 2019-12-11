@@ -35,9 +35,9 @@ import java.util.concurrent.ExecutionException;
 public class CustomerCapacityService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerCapacityService.class);
 	private static final String CUSTOMER_CAP_ERROR_MESSAGE = "No capacity detail found for capacity account: {}";
-	private static final String CAP_DETAIL_ERROR_MESSAGE = "Exception processing capacity detail items for customer:";
 	private static final String PEN_POINTS_ERROR_MESSAGE = "No penality points found for capacity account: {}";
 	private static final String VESSEL_SUM_ERROR_MESSAGE = "Vessel summary information not found for capacity account: {}";
+	private static final String CAP_ACCOUNT_ERROR_MESSAGE = "Error processing customer capacity detail for capacity account: ";
 
 	@Autowired
 	CustomerCapacityRepository customerCapacityRepository;
@@ -67,7 +67,7 @@ public class CustomerCapacityService {
 	 * @return
 	 * @throws ResourceNotFoundException
 	 */
-	public AllCapacityDTO getAllCapacity (String customerId, boolean convertCcsToIfisID) throws ResourceNotFoundException, InterruptedException, ExecutionException {
+	public AllCapacityDTO getAllCapacity (String customerId, boolean convertCcsToIfisID) throws Exception {
 		LOGGER.debug("CustomerCapacityService.getCapacity:{}", customerId);
 		
 		AllCapacityDTO allCapacityDTO = null;
@@ -87,33 +87,6 @@ public class CustomerCapacityService {
 		// Retrieve capacity detail items ...
 		// ... Note - always calling the ASync method, Sync methods retained (but commented out) as fall back if required ...
 		capacity.forEach(item -> this.getCapacityDetailItems_ASync(item));
-		
-//		if (useAsyncCallForDetail) {
-//			capacity.forEach(item -> {
-//				try {
-//					this.getCapacityDetailItems_ASync(item);
-//				} catch(InterruptedException e) {
-//					LOGGER.error(CAP_DETAIL_ERROR_MESSAGE + customerId, e);
-//					Thread.currentThread().interrupt();
-//				} 
-//				catch (ResourceNotFoundException |  ExecutionException e) {
-//					LOGGER.error(CAP_DETAIL_ERROR_MESSAGE + customerId, e);
-//				}
-//			});
-//		}
-//		else {
-//			capacity.forEach(item -> {
-//				try {
-//					this.getCapacityDetailItems_Sync(item);
-//				} catch(InterruptedException e) {
-//					LOGGER.error(CAP_DETAIL_ERROR_MESSAGE + customerId, e);
-//					Thread.currentThread().interrupt();
-//				} 
-//				catch (ResourceNotFoundException |  ExecutionException e) {
-//					LOGGER.error(CAP_DETAIL_ERROR_MESSAGE + customerId, e);
-//				}
-//			});
-//		}
 		
 		// Convert capacity items to DTO ...
 		capacity.forEach(item -> capacityDTO.add(this.convertCapacityToDTO(item)));
@@ -153,14 +126,14 @@ public class CustomerCapacityService {
 			capacityDetail = this.getCapacityDetailByCapAccountId(capacity);
 			queriedObjects.add(capacityDetail);
 		}
-		catch (InterruptedException | ExecutionException e) {
+		catch (InterruptedException e) {
 			LOGGER.debug(CUSTOMER_CAP_ERROR_MESSAGE, capAccountId);
 			Thread.currentThread().interrupt();
-			throw new CustomerCapacityException(e.getMessage());
+			throw new CustomerCapacityException(CAP_ACCOUNT_ERROR_MESSAGE + capAccountId + " [original exception: " + e.getMessage() + "]");
 		}
-		catch (ResourceNotFoundException e) {
+		catch (ExecutionException | ResourceNotFoundException e) {
 			LOGGER.debug(CUSTOMER_CAP_ERROR_MESSAGE, capAccountId);
-			throw new CustomerCapacityException(e.getMessage());
+			throw new CustomerCapacityException(CAP_ACCOUNT_ERROR_MESSAGE + capAccountId + " [original exception: " + e.getMessage() + "]");
 		}
 		
 		// For OnRegister, get rolled-up penalty points with latest expiry date if applicable ...
@@ -173,7 +146,7 @@ public class CustomerCapacityService {
 		}
 		catch (ResourceNotFoundException e) {
 			LOGGER.debug(PEN_POINTS_ERROR_MESSAGE, capAccountId);
-			throw new CustomerCapacityException(e.getMessage());
+			throw new CustomerCapacityException(CAP_ACCOUNT_ERROR_MESSAGE + capAccountId + " [original exception: " + e.getMessage() + "]");
 		}
 		
 		// Get vessel summary ...
@@ -184,75 +157,29 @@ public class CustomerCapacityService {
 		}
 		catch (ResourceNotFoundException e) {
 			LOGGER.debug(VESSEL_SUM_ERROR_MESSAGE, capAccountId);
-			throw new CustomerCapacityException(e.getMessage());
+			throw new CustomerCapacityException(CAP_ACCOUNT_ERROR_MESSAGE + capAccountId + " [original exception: " + e.getMessage() + "]");
 		}
 		
 		CompletableFuture[] futures = queriedObjects.toArray(new CompletableFuture[queriedObjects.size()]);
 		CompletableFuture.allOf(futures); //wait for all to complete
 		
-		//Queries have completed, add the components to the VesselDTO
+		// Queries have completed, add the components to the capacity object ...
 		try {
 			capacity.setCapDetail(capacityDetail==null ? null : capacityDetail.get());
 			capacity.setPenaltyPoints(points==null ? null : points.get());
 			capacity.setVesselSummary(vesselSummary==null ? null : vesselSummary.get());
-		} catch (InterruptedException | ExecutionException e) {
+		} catch (InterruptedException e) {
 			LOGGER.error("Error handling Capacity Detail Items (ASync), cap account: {}", capAccountId, e);
 			Thread.currentThread().interrupt();
-			throw new CustomerCapacityException(e.getMessage());
+			throw new CustomerCapacityException(CAP_ACCOUNT_ERROR_MESSAGE + capAccountId + " [original exception: " + e.getMessage() + "]");
+		}
+		catch (ExecutionException e) {
+			LOGGER.error("Error handling Capacity Detail Items (ASync), cap account: {}", capAccountId, e);
+			throw new CustomerCapacityException(CAP_ACCOUNT_ERROR_MESSAGE + capAccountId + " [original exception: " + e.getMessage() + "]");
 		}
 		
 		LOGGER.info("CustomerCapacityService.getCapacityDetailItems_ASync({}) EElapsed time(ms): {}", capAccountId, (System.currentTimeMillis() - startTime));
     }
-	
-	/***
-	 * private void getCapacityDetailItems_Sync(Capacity capacity) throws ResourceNotFoundException;
-	 * @param capacity
-	 * @throws ResourceNotFoundException
-	 * Standard Sync function for fall-back if Async version cannot be used ...
-	 */
-//	private void getCapacityDetailItems_Sync(Capacity capacity) throws ResourceNotFoundException, InterruptedException, ExecutionException {
-//		LOGGER.debug("CustomerCapacityService.getCapacityDetailItems_Sync: {}", capacity.getCapAccountId());
-//		
-//		final long startTime = System.currentTimeMillis();
-//		int capAccountId = capacity.getCapAccountId();
-//
-//		// Get capacity detail ...
-//		CompletableFuture<List<CapacityDetail>> capacityDetail = null;
-//		try {
-//			capacityDetail = this.getCapacityDetailByCapAccountId(capacity);
-//			capacity.setCapDetail(capacityDetail.get());
-//		}
-//		catch (ResourceNotFoundException | InterruptedException | ExecutionException e) {
-//			LOGGER.debug(CUSTOMER_CAP_ERROR_MESSAGE, capAccountId);
-//			throw e;
-//		}
-//		
-//		// Get penalty points ...
-//		CompletableFuture<List<PenaltyPoints>> points = null;
-//		try {
-//			if (capacity.isOnRegister()) {
-//				points = this.getRolledUpPenaltyPointsWithLatestExpiryDate(capAccountId);
-//				capacity.setPenaltyPoints(points.get());
-//			}
-//		}
-//		catch (ResourceNotFoundException | InterruptedException | ExecutionException e) {
-//			LOGGER.debug(PEN_POINTS_ERROR_MESSAGE, capAccountId);
-//			throw e;
-//		}
-//		
-//		// Get vessel summary ...
-//		CompletableFuture<VesselSummary> vesselSummary = null;
-//		try {
-//			vesselSummary = this.getVesselSummary(capacity.getVesselId());
-//			capacity.setVesselSummary(vesselSummary.get());
-//		}
-//		catch (ResourceNotFoundException | InterruptedException | ExecutionException e) {
-//			LOGGER.debug(VESSEL_SUM_ERROR_MESSAGE, capAccountId);
-//			throw e;
-//		}
-//		
-//		LOGGER.info("CustomerCapacityService.getCapacityDetailItems_Sync({}) EElapsed time(ms):{}", capAccountId, (System.currentTimeMillis() - startTime));
-//    }
 
 	/***
 	 * public CompletableFuture<List<CapacityDetail>> getCapacityDetailByCapAccountId(int capAccountId) throws ResourceNotFoundException;
