@@ -6,27 +6,20 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ie.gov.agriculture.fisheries.la.capacityservice.CapaityServiceApplication;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.AllCapacityDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.PenaltyPoints;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.VesselSummary;
-import ie.gov.agriculture.fisheries.la.capacityservice.exception.ResourceNotFoundException;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityPenaltyPointsRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityDetailRepository;
@@ -68,7 +61,7 @@ public class CapacityServiceTest {
 	private ModelMapper modelMapper;
 	
 	@Test
-	public void testGetCustomerCapacityInformation() throws ResourceNotFoundException, InterruptedException, ExecutionException {
+	public void testGetCustomerCapacityInformation() throws Exception {
 		// ###############################
 		// CapacityRepository
 		// ###############################

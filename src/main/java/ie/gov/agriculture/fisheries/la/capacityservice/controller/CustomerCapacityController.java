@@ -14,11 +14,14 @@ import ie.gov.agriculture.fisheries.la.capacityservice.service.CustomerCapacityS
 import ie.gov.agriculture.fisheries.la.capacityservice.user.UserPrincipal;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.ExtensionProperty;
-import io.swagger.annotations.Extension;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+/**
+ * public class CustomerCapacityController
+ * @author stephen.mccosker
+ * RestController exposing CustomerCapacity end points. 
+ */
 
 @RestController
 @RequestMapping("sfos/capacity")
@@ -28,23 +31,10 @@ public class CustomerCapacityController {
 	CustomerCapacityService customerCapacityService;
 	
 	@ApiOperation(
-		value = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/ccs/FBY10086C]",
+		value = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/ccs/FBY10090G or FBY10086C]",
 		response = AllCapacityDTO.class,
-		authorizations = {
-	        @Authorization(value = "oauth2", scopes = {}),
-	        @Authorization(value = "oauth2-cc", scopes = {}),
-	        @Authorization(value = "oauth2-ac", scopes = {}),
-	        @Authorization(value = "oauth2-rop", scopes = {}),
-	        @Authorization(value = "Bearer")
-		},
-		extensions = {
-			@Extension(name = "roles", properties = {
-				@ExtensionProperty(name = "advisor", value = "advisors are allowed getting every virtualaccount"),
-				@ExtensionProperty(name = "customer", value = "customer only allowed getting own locations")
-			}
-		)},
 		produces = MediaType.APPLICATION_JSON_VALUE,
-		notes = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/ccs/FBY10086C]"
+		notes = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/ccs/FBY10125D or FBY10086C]"
 	)
 	@ApiResponses(value = {@ApiResponse(code = 415, message = "Content type not supported.")})
 	@GetMapping(path = "/ccs/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -57,23 +47,10 @@ public class CustomerCapacityController {
 	}
 	
 	@ApiOperation(
-		value = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/ifis/2957]",
+		value = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/ifis/66959069 or 2957]",
 		response = AllCapacityDTO.class,
-		authorizations = {
-	        @Authorization(value = "oauth2", scopes = {}),
-	        @Authorization(value = "oauth2-cc", scopes = {}),
-	        @Authorization(value = "oauth2-ac", scopes = {}),
-	        @Authorization(value = "oauth2-rop", scopes = {}),
-	        @Authorization(value = "Bearer")
-		},
-		extensions = {
-			@Extension(name = "roles", properties = {
-				@ExtensionProperty(name = "advisor", value = "advisors are allowed getting every virtualaccount"),
-				@ExtensionProperty(name = "customer", value = "customer only allowed getting own locations")
-			}
-		)},
 		produces = MediaType.APPLICATION_JSON_VALUE,
-		notes = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/ifis/2957]"
+		notes = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/ifis/66959069 or 2957]"
 	)
 	@ApiResponses(value = {@ApiResponse(code = 415, message = "Content type not supported.")})
 	@GetMapping(path = "/ifis/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
