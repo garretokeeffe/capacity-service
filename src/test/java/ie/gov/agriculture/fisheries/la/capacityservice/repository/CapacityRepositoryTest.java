@@ -112,12 +112,12 @@ public class CapacityRepositoryTest {
     	// Prepare mock ...
     	List<IfisWrapper> ifisWrapper = new ArrayList<>();
     	
-		when(ccsRepository.findIfisIdByCcsId(anyString())).thenReturn(ifisWrapper);
+		when(ccsRepository.findIfisIdByCcsId(anyString(), anyInt())).thenReturn(ifisWrapper);
     	
 		// Test repository call ...
-		List<IfisWrapper> ifisWrapper_out = ccsRepository.findIfisIdByCcsId("1000");
+		List<IfisWrapper> ifisWrapper_out = ccsRepository.findIfisIdByCcsId("1000", 151);
         
         assertThat(ifisWrapper_out).isNotNull();
-		Mockito.verify(ccsRepository, Mockito.times(1)).findIfisIdByCcsId(anyString());
+		Mockito.verify(ccsRepository, Mockito.times(1)).findIfisIdByCcsId(anyString(), anyInt());
 	}
 }

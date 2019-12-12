@@ -3,6 +3,7 @@ package ie.gov.agriculture.fisheries.la.capacityservice.service;
 import org.slf4j.Logger; 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -59,6 +60,9 @@ public class CustomerCapacityService {
 	
 	@Autowired
     private ModelMapper modelMapper;
+	
+	@Value("${database.role:151}")
+	private Integer databaseRole;
 	
 	/***
 	 * public AllCapacityDTO getAllCapacity (String customerId, boolean convertCcsToIfisID) throws ResourceNotFoundException;
@@ -297,9 +301,9 @@ public class CustomerCapacityService {
 	 * @throws ResourceNotFoundException 
 	 */
 	private String getIfisIdByCcsId(String ccsId) throws ResourceNotFoundException {
-		LOGGER.debug("VesselService.getIfisIdByCcsId({})", ccsId);
+		LOGGER.debug("VesselService.getIfisIdbyCcsId({}) - role:{}", ccsId, databaseRole);
 		
-		List<IfisWrapper> results = cCSRepository.findIfisIdByCcsId(ccsId);
+		List<IfisWrapper> results = cCSRepository.findIfisIdByCcsId(ccsId, databaseRole);
 		
 		if (results==null || CollectionUtils.isEmpty(results)) {
 			LOGGER.info("Unable to find IFIS-Id for ccsId {}", ccsId);
