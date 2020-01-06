@@ -103,9 +103,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter impleme
 		http.authorizeRequests()
 			.antMatchers("/","/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**")
 				.permitAll()
-					.antMatchers("/sfos/customer/capacity/**").hasRole(SFOS_SERVICE)
-						.antMatchers("/sfos/capacity/ccs/**").hasRole(SFOS_SERVICE)
-							.antMatchers("/sfos/capacity/ifis/**").hasRole(SFOS_SERVICE)
+					.antMatchers("/sfos/customer/capacity/users/**").hasRole(SFOS_SERVICE)
+						.antMatchers("/sfos/capacity/users/ccs/**").hasRole(SFOS_SERVICE)
+							.antMatchers("/sfos/capacity/users/ifis/**").hasRole(SFOS_SERVICE)
 								.anyRequest().denyAll();
 		
 		http.csrf().disable();

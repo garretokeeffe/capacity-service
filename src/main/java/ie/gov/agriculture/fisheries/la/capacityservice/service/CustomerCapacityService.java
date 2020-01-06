@@ -1,6 +1,12 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.service;
 
-import org.slf4j.Logger; 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,12 +28,6 @@ import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityReposi
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityDetailRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.VesselSummaryRepository;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-import org.modelmapper.ModelMapper;
-import java.util.concurrent.ExecutionException;
 
 /** https://confluence.agriculture.gov.ie/confluence/display/FISHERIES/Get+Capacity **/
 
@@ -303,30 +303,15 @@ public class CustomerCapacityService {
 	private String getIfisIdByCcsId(String ccsId) throws ResourceNotFoundException {
 		LOGGER.debug("VesselService.getIfisIdbyCcsId({}) - role:{}", ccsId, databaseRole);
 		
-		List<IfisWrapper> results = cCSRepository.findIfisIdByCcsId(ccsId, databaseRole);
+		IfisWrapper ifisDetail = cCSRepository.findIfisIdByCcsId(ccsId, databaseRole);
 		
-		if (results==null || CollectionUtils.isEmpty(results)) {
+		if (ifisDetail==null || ifisDetail.getIfisId() == null || ifisDetail.getIfisId().isEmpty()) {
 			LOGGER.info("Unable to find IFIS-Id for ccsId {}", ccsId);
 			throw new ResourceNotFoundException("No IFIS-ID found for ccsId:" + ccsId);
 		}
 		
-		String ifisId = results.get(0).getIfisId();
-		ifisId = (ifisId==null ? "" : ifisId);
-
-		// Double check we have a valid value returned ...
-		if (ifisId.trim().equalsIgnoreCase("")) {
-			LOGGER.info("Unable to find IFIS-Id for ccsId {}", ccsId);
-			throw new ResourceNotFoundException("No IFIS-ID found for ccsId:" + ccsId);
-		}
-		else {
-			if (results.size() > 1) { //should not happen
-				LOGGER.warn("For ccsId:{}, Found {} IFIS-IDss:{}. Will use first:{}",ccsId, results.size(), results, results.get(0));
-			}
-			else {
-				LOGGER.info("IFIS-ID:{} found for ccsID:{}", ifisId);
-			}
-		}
+		LOGGER.info("IFIS-ID:{} found for ccsID:{}", ifisDetail.getIfisId());
 		
-		return ifisId;
+		return ifisDetail.getIfisId();
 	}
 }
