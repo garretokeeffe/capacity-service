@@ -1,6 +1,5 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.repository;
 
-import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -17,5 +16,5 @@ public interface CCSRepository extends CrudRepository<IfisWrapper, String> {
 			value = "SELECT pkco_ifis.fn_get_fisheries_custid_role(:ccsId, :role) bcus_fisheries_cust_id FROM dual" , nativeQuery = true
 	)
 
-	public List<IfisWrapper> findIfisIdByCcsId (@Param("ccsId") String ccsId, @Param("role") Integer role);	
+	public IfisWrapper findIfisIdByCcsId (@Param("ccsId") String ccsId, @Param("role") Integer role);
 }

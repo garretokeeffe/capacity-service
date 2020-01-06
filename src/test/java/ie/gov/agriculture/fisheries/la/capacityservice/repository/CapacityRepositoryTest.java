@@ -1,8 +1,8 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +10,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.IfisWrapper;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.PenaltyPoints;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.VesselSummary;
-import org.junit.platform.runner.JUnitPlatform;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
@@ -110,12 +110,13 @@ public class CapacityRepositoryTest {
 	@Test
 	public void findIfisIdByCcsId() {
     	// Prepare mock ...
-    	List<IfisWrapper> ifisWrapper = new ArrayList<>();
+    	//List<IfisWrapper> ifisWrapper = new ArrayList<>();
+	    IfisWrapper ifisWrapper = new IfisWrapper();
     	
 		when(ccsRepository.findIfisIdByCcsId(anyString(), anyInt())).thenReturn(ifisWrapper);
     	
 		// Test repository call ...
-		List<IfisWrapper> ifisWrapper_out = ccsRepository.findIfisIdByCcsId("1000", 151);
+		IfisWrapper ifisWrapper_out = ccsRepository.findIfisIdByCcsId("1000", 151);
         
         assertThat(ifisWrapper_out).isNotNull();
 		Mockito.verify(ccsRepository, Mockito.times(1)).findIfisIdByCcsId(anyString(), anyInt());

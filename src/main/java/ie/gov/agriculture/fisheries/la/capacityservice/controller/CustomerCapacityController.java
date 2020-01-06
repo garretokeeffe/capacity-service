@@ -24,17 +24,17 @@ import io.swagger.annotations.ApiResponses;
  */
 
 @RestController
-@RequestMapping("sfos/capacity")
+@RequestMapping("sfos/capacity/users")
 @Api(value = "customerCapacityServices")
 public class CustomerCapacityController {
 	@Autowired
 	CustomerCapacityService customerCapacityService;
 	
 	@ApiOperation(
-		value = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/ccs/FBY10090G or FBY10086C]",
+		value = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ccs/FBY10090G or FBY10086C]",
 		response = AllCapacityDTO.class,
 		produces = MediaType.APPLICATION_JSON_VALUE,
-		notes = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/ccs/FBY10125D or FBY10086C]"
+		notes = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ccs/FBY10125D or FBY10086C]"
 	)
 	@ApiResponses(value = {@ApiResponse(code = 415, message = "Content type not supported.")})
 	@GetMapping(path = "/ccs/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,10 +47,10 @@ public class CustomerCapacityController {
 	}
 	
 	@ApiOperation(
-		value = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/ifis/66959069 or 2957]",
+		value = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ifis/66959069 or 2957]",
 		response = AllCapacityDTO.class,
 		produces = MediaType.APPLICATION_JSON_VALUE,
-		notes = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/ifis/66959069 or 2957]"
+		notes = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ifis/66959069 or 2957]"
 	)
 	@ApiResponses(value = {@ApiResponse(code = 415, message = "Content type not supported.")})
 	@GetMapping(path = "/ifis/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
