@@ -3,18 +3,23 @@ package ie.gov.agriculture.fisheries.la.capacityservice.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyInt;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.modelmapper.ModelMapper;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
+
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.AllCapacityDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
@@ -24,7 +29,6 @@ import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityPenalt
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CapacityRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.CustomerCapacityDetailRepository;
 import ie.gov.agriculture.fisheries.la.capacityservice.repository.VesselSummaryRepository;
-import org.junit.platform.runner.JUnitPlatform;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
@@ -158,7 +162,7 @@ public class CapacityServiceTest {
 		PenaltyPoints penaltyPoint = new PenaltyPoints();
 		penaltyPoint.setID(Integer.valueOf(100125).longValue());
 		penaltyPoint.setASSIGNEDPOINTS("6");
-		penaltyPoint.setEXPIRYDATE("10-Oct-2022");
+		penaltyPoint.setEXPIRYDATE(LocalDate.of(2022, 10, 10));
 		points.add(penaltyPoint);
 		
 		CompletableFuture<List<PenaltyPoints>> penaltyPoints = new CompletableFuture<List<PenaltyPoints>>();

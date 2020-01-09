@@ -1,12 +1,16 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.entity;
 
-import java.util.ArrayList; 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,10 +31,10 @@ public class CapacityDetail {
 		 
 	// attributes only applicable to off-register capacity
 	@Column(name = "OFFREGDATE")
-	private String offRegisterDate; // dd/mm/yyyy
+	private LocalDate offRegisterDate; // dd/mm/yyyy
 	
 	@Column(name = "CAPACITYEXPIRYDATE")
-	private String expiryDate; // dd/mm/yyyy
+	private LocalDate expiryDate; // dd/mm/yyyy
 	
 	@Column(name = "SOURCEVESSELID")
 	private String sourceVesselId; // future-proof, in case we need to do searches on the source vessel

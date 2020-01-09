@@ -1,9 +1,12 @@
 package ie.gov.agriculture.fisheries.la.capacityservice.entity;
 
-import static org.junit.Assert.assertNotNull; 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -11,13 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import ie.gov.agriculture.fisheries.la.capacityservice.CapaityServiceApplication;
-import ie.gov.agriculture.fisheries.la.capacityservice.entity.Capacity;
-import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
-import ie.gov.agriculture.fisheries.la.capacityservice.entity.IfisWrapper;
-import ie.gov.agriculture.fisheries.la.capacityservice.entity.PenaltyPoints;
-import ie.gov.agriculture.fisheries.la.capacityservice.entity.TrackRecord;
-import ie.gov.agriculture.fisheries.la.capacityservice.entity.VesselSummary;
 
 @Ignore // Ignoring EnityTests as coverage not required for getters & setters ...
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -89,8 +87,8 @@ public class EnityTests {
 			capacityDetail.setSourceVesselName("BRIDGET CARMEL");
 			capacityDetail.setCapacityAmount(300);
 			capacityDetail.setPointsAssigned("24");
-			capacityDetail.setExpiryDate("01/01/2020");
-			capacityDetail.setOffRegisterDate("01/01/2021");
+			capacityDetail.setExpiryDate(LocalDate.of(2020, 1, 1));
+			capacityDetail.setOffRegisterDate(LocalDate.of(2021, 1, 1));
 			capacityDetail.setPenaltyPoints(points2);
 			capacityDetail.setTrackRecord(trackRecordItems);
 			capacityDetail.setPenaltyPointsReturnDetail(new PenaltyPoints());
@@ -101,8 +99,8 @@ public class EnityTests {
 			assertTrue(testMthd + " capacityDetail.getSourceVesselId().equalsIgnoreCase(200) assert true.", capacityDetail.getSourceVesselId().equalsIgnoreCase("200"));
 			assertTrue(testMthd + " capacityDetail.getSourceVesselName().equalsIgnoreCase(BRIDGET CARMEL) assert true.", capacityDetail.getSourceVesselName().equalsIgnoreCase("BRIDGET CARMEL"));
 			assertTrue(testMthd + " capacityDetail.getPointsAssigned().equalsIgnoreCase(24) assert true.", capacityDetail.getPointsAssigned().equalsIgnoreCase("24"));
-			assertTrue(testMthd + " capacityDetail.getExpiryDate().equalsIgnoreCase(01/01/2020) assert true.", capacityDetail.getExpiryDate().equalsIgnoreCase("01/01/2020"));
-			assertTrue(testMthd + " capacityDetail.getOffRegisterDate().equalsIgnoreCase(01/01/2021) assert true.", capacityDetail.getOffRegisterDate().equalsIgnoreCase("01/01/2021"));
+			assertTrue(testMthd + " capacityDetail.getExpiryDate().equalsIgnoreCase(01/01/2020) assert true.", capacityDetail.getExpiryDate().isEqual(LocalDate.of(2020, 1, 1)));
+			assertTrue(testMthd + " capacityDetail.getOffRegisterDate().equalsIgnoreCase(01/01/2021) assert true.", capacityDetail.getOffRegisterDate().isEqual(LocalDate.of(2021, 1, 1)));
 			
 			assertNotNull(capacityDetail.getPenaltyPoints());
 			assertNotNull(capacityDetail.getTrackRecord());
@@ -116,14 +114,14 @@ public class EnityTests {
 			point.setCAPACCOUNTID("297458102");
 			point.setCAPSEGMENTID("297458103");
 			point.setASSIGNEDPOINTS("12");
-			point.setEXPIRYDATE("09/10/2018");
+			point.setEXPIRYDATE(LocalDate.of(2018, 10, 9));
 			point.setPENALTYCOMMENT("Test!");
 			
 			assertTrue(testMthd + " point.getID()==297458165 assert true.", point.getID()==297458165);
 			assertTrue(testMthd + " point.getCAPACCOUNTID().equalsIgnoreCase(297458102) assert true.", point.getCAPACCOUNTID().equalsIgnoreCase("297458102"));
 			assertTrue(testMthd + " point.getCAPSEGMENTID().equalsIgnoreCase(297458103) assert true.", point.getCAPSEGMENTID().equalsIgnoreCase("297458103"));
 			assertTrue(testMthd + " point.getASSIGNEDPOINTS().equalsIgnoreCase(12) assert true.", point.getASSIGNEDPOINTS().equalsIgnoreCase("12"));
-			assertTrue(testMthd + " point.getEXPIRYDATE().equalsIgnoreCase(09/10/2018) assert true.", point.getEXPIRYDATE().equalsIgnoreCase("09/10/2018"));
+			assertTrue(testMthd + " point.getEXPIRYDATE().equalsIgnoreCase(09/10/2018) assert true.", point.getEXPIRYDATE().isEqual(LocalDate.of(2018, 10, 9)));
 			assertTrue(testMthd + " point.setPENALTYCOMMENT().equalsIgnoreCase(09/10/2018) assert true.", point.getPENALTYCOMMENT().equalsIgnoreCase("Test!"));
 			
 			assertNotNull(point.toString());

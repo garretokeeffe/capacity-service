@@ -4,15 +4,19 @@ import java.util.concurrent.Executor;
 
 import javax.sql.DataSource;
 
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import ie.gov.agriculture.fisheries.la.capacityservice.config.MapperConverter;
+
 
 @SpringBootApplication
 @EnableAsync
@@ -48,10 +52,14 @@ public class CapaityServiceApplication {
 	    return dataSource;
 	}	
 	
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
+	@Bean
+	public ModelMapper modelMapper() {
+	  ModelMapper modelMapper = new ModelMapper();
+	  modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+	  modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+	  modelMapper.addConverter(MapperConverter.getDateMapper());
+	  return modelMapper;
+	}
     
     @Bean(name = "asyncExecutor")
     public Executor taskExecutor() {

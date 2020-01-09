@@ -2,12 +2,14 @@ package ie.gov.agriculture.fisheries.la.capacityservice.repository;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+
 import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
 
 @Component
@@ -15,8 +17,8 @@ import ie.gov.agriculture.fisheries.la.capacityservice.entity.CapacityDetail;
 public interface CustomerCapacityDetailRepository extends CrudRepository<CapacityDetail, Long> {
 	@Query (
 		value = "" +
-			"select distinct TRANSDETAILID ID, CAPACITYAMOUNT, CAPACITYTYPE, TO_CHAR(OFFREGDATE, 'dd/mm/yyyy') OFFREGDATE, VESSELID, POINTSASSIGNED, CAPSEGMENTID, " +
-			"TO_CHAR(CAST(ADD_MONTHS(OFFREGDATE,24) AS DATE), 'dd/mm/yyyy') CAPACITYEXPIRYDATE, " +
+			"select distinct TRANSDETAILID ID, CAPACITYAMOUNT, CAPACITYTYPE, OFFREGDATE, VESSELID, POINTSASSIGNED, CAPSEGMENTID, " +
+			"ADD_MONTHS(OFFREGDATE, 24) CAPACITYEXPIRYDATE, " +
 			"CASE WHEN offRegister='false' THEN null ELSE SOURCEVESSELID END SOURCEVESSELID, CASE WHEN offRegister='false' THEN null ELSE SOURCEVESSELNAME END SOURCEVESSELNAME from (    " +
 			"	select c.TRANSDETAILID, c.TRANSACTIONAMOUNT /*case when a.statusid = 6237299 then B.PROPOSEDBALANCE else B.GROSSBALANCE end*/ CAPACITYAMOUNT, " + 
 			"	pkgifisreference.fngetreferencedesc(b.UOMID) CAPACITYTYPE,  " + 
