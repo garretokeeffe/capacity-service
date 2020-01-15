@@ -90,7 +90,7 @@ public class DTOTests {
 			assertTrue(testMthd + " capacityDetailDto.getExpiryDate().equalsIgnoreCase(01/01/2020) assert true.", capacityDetailDto.getExpiryDate().equalsIgnoreCase("01/01/2020"));
 			assertTrue(testMthd + " capacityDetailDto.getOffRegisterDate().equalsIgnoreCase(01/01/2021) assert true.", capacityDetailDto.getOffRegisterDate().equalsIgnoreCase("01/01/2021"));
 			
-			assertNotNull(capacityDetailDto.getTrackRecord());
+			//assertNotNull(capacityDetailDto.getTrackRecord());
 			assertNotNull(capacityDetailDto.toString());
 			
 			/* Penalty Points */

@@ -61,12 +61,6 @@ public class CapacityDetailDTO {
 	/* TODO - Manual getter for trackRecord -- MOCKED FOR NOW, TO BE REPLACED WITH LIVE DATA */
 	@JsonInclude(Include.NON_NULL)
 	public List<TrackRecordDTO> getTrackRecord () {
-		List<TrackRecordDTO> trackRecordOut = new ArrayList<>(0);
-		
-		trackRecordOut.add(new TrackRecordDTO (1, true));
-		trackRecordOut.add(new TrackRecordDTO (3, false));
-		trackRecordOut.add(new TrackRecordDTO (5, true));
-		
-		return trackRecordOut;
+		return null;
 	}
 }
