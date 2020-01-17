@@ -17,7 +17,7 @@ import org.modelmapper.Converter;
  *
  */
 public class MapperConverter {
-	static final ZoneId id = ZoneId.systemDefault();
+	static final ZoneId UTC_ZONE = ZoneId.of("UTC");
 	
 	public static Converter<Date, String> getDateMapper() {
 		return new AbstractConverter<Date, String>() {
@@ -47,10 +47,10 @@ public class MapperConverter {
 	 */
 	public static String getDateIso8601(Date date) {
 		if (date instanceof java.sql.Date) { // sql.Date has no time component
-			return ZonedDateTime.of(((java.sql.Date) date).toLocalDate().atStartOfDay(), id).format(DateTimeFormatter.ISO_INSTANT);
+			return ZonedDateTime.of(((java.sql.Date) date).toLocalDate().atStartOfDay(), UTC_ZONE).format(DateTimeFormatter.ISO_INSTANT);
 		} 
 		else {
-			return ZonedDateTime.ofInstant(date.toInstant(), id).format(DateTimeFormatter.ISO_INSTANT);
+			return ZonedDateTime.ofInstant(date.toInstant(), UTC_ZONE).format(DateTimeFormatter.ISO_INSTANT);
 		}
 	}
 	
@@ -68,6 +68,6 @@ public class MapperConverter {
 			return null;
 		}
 		LocalDateTime localDateTime = date.atStartOfDay();
-		return ZonedDateTime.of(localDateTime, id).format(DateTimeFormatter.ISO_INSTANT);		
+		return ZonedDateTime.of(localDateTime, UTC_ZONE).format(DateTimeFormatter.ISO_INSTANT);		
 	}
 }
