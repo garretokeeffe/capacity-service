@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
@@ -20,7 +18,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import ie.gov.agriculture.fisheries.la.capacityservice.dto.AllCapacityDTO;
-import ie.gov.agriculture.fisheries.la.capacityservice.dto.CustomerCapacityDTO;
 import ie.gov.agriculture.fisheries.la.capacityservice.service.CustomerCapacityService;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +44,8 @@ public class CapacityControllerTest {
         
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
+        assertThat(responseEntity.getBody().getLinks()).isNotNull();
+        assertThat(responseEntity.getBody().getLinks().toList().get(0).getHref()).isNotNull();
         Mockito.verify(customerCapacityService, Mockito.times(1)).getAllCapacity(anyString(), eq(true));
     }
     
@@ -63,6 +62,8 @@ public class CapacityControllerTest {
         
         assertThat(responseEntity).isNotNull();
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(HttpStatus.OK.value());
+        assertThat(responseEntity.getBody().getLinks()).isNotNull();
+        assertThat(responseEntity.getBody().getLinks().toList().get(0).getHref()).isNotNull();
         Mockito.verify(customerCapacityService, Mockito.times(1)).getAllCapacity(anyString(), eq(false));
     }
 }
