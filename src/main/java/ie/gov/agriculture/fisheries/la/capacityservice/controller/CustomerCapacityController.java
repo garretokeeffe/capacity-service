@@ -2,6 +2,7 @@ package ie.gov.agriculture.fisheries.la.capacityservice.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +32,10 @@ public class CustomerCapacityController {
 	CustomerCapacityService customerCapacityService;
 	
 	@ApiOperation(
-		value = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ccs/FBY10090G or FBY10086C]",
+		value = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ccs/SLA00003]",
 		response = AllCapacityDTO.class,
 		produces = MediaType.APPLICATION_JSON_VALUE,
-		notes = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ccs/FBY10125D or FBY10086C]"
+		notes = "Retrieve All Capacity information for an individual customer using CCS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ccs/SLA00003]"
 	)
 	@ApiResponses(value = {@ApiResponse(code = 415, message = "Content type not supported.")})
 	@GetMapping(path = "/ccs/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -43,14 +44,17 @@ public class CustomerCapacityController {
 		
 		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, true);
 		
+		// Add Hateoas link ...
+		allCapacityDTO.add(WebMvcLinkBuilder.linkTo(CustomerCapacityController.class).slash("ccs").slash(customerId).withSelfRel());
+		
 		return new ResponseEntity<>(allCapacityDTO, HttpStatus.OK);
 	}
 	
 	@ApiOperation(
-		value = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ifis/66959069 or 2957]",
+		value = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ifis/275866231 or 66959069]",
 		response = AllCapacityDTO.class,
 		produces = MediaType.APPLICATION_JSON_VALUE,
-		notes = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ifis/66959069 or 2957]"
+		notes = "Retrieve All Capacity information for an individual customer using IFIS Customer ID [e.g. http://localhost:8080/sfos/capacity/users/ifis/275866231 or 66959069]"
 	)
 	@ApiResponses(value = {@ApiResponse(code = 415, message = "Content type not supported.")})
 	@GetMapping(path = "/ifis/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -58,6 +62,9 @@ public class CustomerCapacityController {
 		UserPrincipal.getUserPrincipal(request);
 		
 		AllCapacityDTO allCapacityDTO = customerCapacityService.getAllCapacity(customerId, false);
+		
+		// Add Hateoas link ...
+		allCapacityDTO.add(WebMvcLinkBuilder.linkTo(CustomerCapacityController.class).slash("ifis").slash(customerId).withSelfRel());
 		
 		return new ResponseEntity<>(allCapacityDTO, HttpStatus.OK);
 	}
